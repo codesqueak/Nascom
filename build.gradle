@@ -54,7 +54,7 @@ test
             maxParallelForks = 1
             filter
                     {
-                        includeTestsMatching "com.codingrodent.emulator.emulator.*"
+                        includeTestsMatching "com.codingrodent.emulator.*"
                     }
             jacoco {
                 append = false
