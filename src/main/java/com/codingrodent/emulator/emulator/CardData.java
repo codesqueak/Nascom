@@ -25,51 +25,56 @@
 
 package com.codingrodent.emulator.emulator;
 
-import java.util.Properties;
+import java.util.Map;
 
 public class CardData {
 
-    private final Properties properties;
-    private String cardDetails;
-    private String cardName;
-    private String className;
+    private String name;
+    private String details;
+    private String clazz;
+    private int order;
+    private Map<String, String> properties;
 
-    CardData() {
-        properties = new Properties();
-        cardName = "-- Undefined --";
-        className = null;
+    public CardData() {
     }
 
     public String getName() {
-        return cardName;
-    }
-
-    void setName(String name) {
-        cardName = name;
+        return name;
     }
 
     public String getDetails() {
-        return cardDetails;
+        return details;
     }
 
-    public void setDetails(String details) {
-        cardDetails = details;
+    public void setName(final String name) {
+        this.name = name;
     }
 
-    void setProperty(String name, String value) {
-        properties.setProperty(name, value);
+    public void setDetails(final String details) {
+        this.details = details;
     }
 
-    public String getClassName() {
-        return className;
+    public String getClazz() {
+        return clazz;
     }
 
-    void setClassName(String name) {
-        className = name;
+    public void setClazz(final String clazz) {
+        this.clazz = clazz;
     }
 
-    public Properties getProperties() {
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(final int order) {
+        this.order = order;
+    }
+
+    public Map<String, String> getProperties() {
         return properties;
     }
 
+    public void setProperties(final Map<String, String> properties) {
+        this.properties = properties;
+    }
 }

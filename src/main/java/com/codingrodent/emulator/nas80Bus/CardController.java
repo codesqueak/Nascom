@@ -31,7 +31,7 @@ import com.codingrodent.emulator.utilities.*;
 
 import javax.swing.*;
 import java.io.*;
-import java.util.ArrayList;
+import java.util.List;
 
 public class CardController {
 
@@ -63,7 +63,7 @@ public class CardController {
      */
     public void insertCards() {
         cardsLoaded = 0;
-        ArrayList<CardData> cards = systemContext.getAllCards();
+        List<CardData> cards = systemContext.getAllCards();
         if (cards.isEmpty()) {
             String msg = "No cards defined in emulatorInfo.xml";
             systemContext.logErrorEvent(msg);
@@ -71,7 +71,7 @@ public class CardController {
         } else {
             int slot = 0;
             for (final CardData cardData : cards) {
-                String className = cardData.getClassName();
+                String className = cardData.getClazz();
                 try {
                     Class<?> card = Class.forName(className);
                     ICard genericCard = (ICard) card.newInstance();
