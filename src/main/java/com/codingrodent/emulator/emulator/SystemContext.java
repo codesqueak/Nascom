@@ -31,7 +31,7 @@ import com.codingrodent.emulator.nas80Bus.CardController;
 import org.apache.logging.log4j.*;
 
 import java.net.*;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Provides for a standardized system wide representation of the system preferences (systemPrefs.xml).
@@ -51,7 +51,7 @@ public class SystemContext {
     private SystemContext() {
         try {
             // system settings
-            emulatorInfo = new ProcessEmulatorInfoFile(this);
+            emulatorInfo = new ProcessEmulatorInfoFile();
             loader = generateClassLoader();
         } catch (Exception e) {
             String msg = "System failed to start in SystemContext : " + e.getMessage();
@@ -122,7 +122,7 @@ public class SystemContext {
      *
      * @return An array holding all cards identified in the emulatorInfo.xml
      */
-    public ArrayList<CardData> getAllCards() {
+    public List<CardData> getAllCards() {
         return emulatorInfo.getAllCards();
     }
 

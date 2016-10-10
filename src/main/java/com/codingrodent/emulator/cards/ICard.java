@@ -28,7 +28,7 @@ package com.codingrodent.emulator.cards;
 import com.codingrodent.emulator.nas80Bus.INasBus;
 
 import java.awt.event.ActionListener;
-import java.util.Properties;
+import java.util.Map;
 
 public interface ICard extends ActionListener {
 
@@ -42,7 +42,7 @@ public interface ICard extends ActionListener {
      *
      * @param cardProperties Property list
      */
-    void setCardProperties(Properties cardProperties);
+    void setCardProperties(Map<String, String> cardProperties);
 
     /**
      * Identify the NAS BUS to the card

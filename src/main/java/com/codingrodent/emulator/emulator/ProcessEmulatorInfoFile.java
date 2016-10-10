@@ -25,149 +25,43 @@
 
 package com.codingrodent.emulator.emulator;
 
-import com.sun.org.apache.xpath.internal.XPathAPI;
-import com.sun.org.apache.xpath.internal.objects.XObject;
-import org.w3c.dom.*;
-import org.w3c.dom.traversal.NodeIterator;
-import org.xml.sax.*;
+import com.google.gson.*;
 
-import javax.xml.parsers.*;
 import java.io.*;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * This class holds an internal representation of the machineInfo.xml document.
  */
-public class ProcessEmulatorInfoFile implements ErrorHandler {
+public class ProcessEmulatorInfoFile {
 
-    private static final String EMULATOR_INFO_FILE = "emulatorInfo.xml";
-    private final static String JAXP_SCHEMA_LANGUAGE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
-    private final static String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
-    private final SystemContext context;
-    private DocumentBuilderFactory dbf;
-    private ArrayList<CardData> cardInfo;
+    private static final String EMULATOR_INFO_FILE = "emulatorInfo.json";
+    private List<CardData> cardInfo;
 
     /**
      * Standard constructor - Loads the machineInfo.xml document and resets
      * system ready for use. Will wait and poll until the document becomes
      * available.
      *
-     * @param context Context required to be passed in as it is used in the
-     *                constructor of system context
      * @throws ProcessEmulatorInfoFileException Thrown if unable to recover the document
      */
-    ProcessEmulatorInfoFile(SystemContext context) throws ProcessEmulatorInfoFileException {
-        this.context = context;
-        reset();
-        try {
-            processMachineInfoDocument(new InputSource(new InputStreamReader(new FileInputStream(EMULATOR_INFO_FILE), "UTF-8")));
-        } catch (FileNotFoundException | UnsupportedEncodingException ex) {
-            throw new ProcessEmulatorInfoFileException("Invalid configuration file.");
-        }
-    }
-
-    /**
-     * Debug code to test processing
-     *
-     * @param args No parameters
-     */
-    public static void main(String[] args) {
-        System.out.println("-- start --");
-        try {
-            SystemContext context = SystemContext.createInstance();
-            new ProcessEmulatorInfoFile(context);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        System.out.println("-- stop --");
-    }
-
-    /**
-     * Reset internal data structures
-     */
-    private void reset() {
-        dbf = DocumentBuilderFactory.newInstance();
-        dbf.setIgnoringComments(true);
-        dbf.setNamespaceAware(true);
-        dbf.setValidating(true);
-        dbf.setIgnoringElementContentWhitespace(true);
-        dbf.setAttribute(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
-        //
-        cardInfo = new ArrayList<>(16);
-    }
-
-    /**
-     * Create the internal representation of the machineInfo.xml document
-     *
-     * @param inputSource Document to be processed
-     * @throws ProcessEmulatorInfoFileException Thrown on any error while processing the file
-     */
-    private void processMachineInfoDocument(InputSource inputSource) throws ProcessEmulatorInfoFileException {
-        try {
-            // Create parser
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            // Process machineInfo.xml
-            {
-                db.setErrorHandler(this);
-                Document document = db.parse(inputSource);
-                processDocument(document);
-                context.logInfoEvent("Loading emulatorInfo.XML - Complete");
-            }
-        } catch (Exception e) {
-            // e.printStackTrace();
+    ProcessEmulatorInfoFile() throws ProcessEmulatorInfoFileException {
+        try (Reader reader = new InputStreamReader(new FileInputStream(EMULATOR_INFO_FILE), "UTF-8")) {
+            Gson gson = new GsonBuilder().create();
+            CardData[] cardData = gson.fromJson(reader, CardData[].class);
+            Arrays.sort(cardData, (a, b) -> {
+                int x = a.getOrder();
+                int y = b.getOrder();
+                if (x < y)
+                    return -1;
+                else if (x == y)
+                    return 0;
+                else
+                    return 1;
+            });
+            cardInfo = Arrays.asList(cardData);
+        } catch (IOException e) {
             throw new ProcessEmulatorInfoFileException(e);
-        }
-    }
-
-    /**
-     * Execute a basic xpath expression on a document from its root node down
-     *
-     * @param localDocument The document to be procesed
-     * @param expression    The xpath expression
-     * @return An iteration object for the returned node set
-     */
-    private NodeIterator executeXPathExpression(Node localDocument, String expression) {
-        // if (debug) System.err.println("Xpath");
-        try {
-            XObject obj = XPathAPI.eval(localDocument, expression);
-            return obj.nodeset();
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /**
-     * Extract the required information from the emulatorInfo.xml document
-     *
-     * @param localDocument A parsed emulatorInfo.xml ready for data extraction
-     * @throws ProcessEmulatorInfoFileException Thrown if any defect in the file detected
-     */
-    private void processDocument(Document localDocument) throws ProcessEmulatorInfoFileException {
-        NodeIterator iter;
-        NodeIterator propertyIterator;
-        Node node;
-        Node propertyNode;
-        NamedNodeMap attributes;
-        NamedNodeMap propertyAttributes;
-        //
-        try {
-            //
-            iter = executeXPathExpression(localDocument, "child::EmulatorInformation/child::Cards/child::Card");
-            while ((iter != null) && ((node = iter.nextNode()) != null)) {
-                CardData cardData = new CardData();
-                cardInfo.add(cardData);
-                attributes = node.getAttributes();
-                cardData.setName(attributes.getNamedItem("Name").getNodeValue());
-                cardData.setClassName(attributes.getNamedItem("Class").getNodeValue());
-                //
-                propertyIterator = executeXPathExpression(node, "child::Properties/child::Property");
-                while ((propertyIterator != null) && ((propertyNode = propertyIterator.nextNode()) != null)) {
-                    propertyAttributes = propertyNode.getAttributes();
-                    cardData.setProperty(propertyAttributes.getNamedItem("Name").getNodeValue(), propertyAttributes.getNamedItem("Value").getNodeValue());
-                }
-            }
-        } catch (Exception ex) {
-            throw new ProcessEmulatorInfoFileException(ex.getMessage());
         }
     }
 
@@ -176,39 +70,7 @@ public class ProcessEmulatorInfoFile implements ErrorHandler {
      *
      * @return An array holding all cards identified in the emulatorInfo.xml
      */
-    ArrayList<CardData> getAllCards() {
+    List<CardData> getAllCards() {
         return cardInfo;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.xml.sax.ErrorHandler#warning(org.xml.sax.SAXParseException)
-     */
-    @Override
-    public void warning(SAXParseException exception) throws SAXException {
-        context.logWarnEvent("Problem with the configuration file (" + exception.getMessage() + ")");
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.xml.sax.ErrorHandler#error(org.xml.sax.SAXParseException)
-     */
-    @Override
-    public void error(SAXParseException exception) throws SAXException {
-        context.logErrorEvent("Problem with the configuration file (" + exception.getMessage() + ")");
-        throw new SAXException("Problem with the configuration file");
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.xml.sax.ErrorHandler#fatalError(org.xml.sax.SAXParseException)
-     */
-    @Override
-    public void fatalError(SAXParseException exception) throws SAXException {
-        context.logFatalEvent("Problem with the configuration file (" + exception.getMessage() + ")");
-        throw new SAXException("Problem with the configuration file");
     }
 }

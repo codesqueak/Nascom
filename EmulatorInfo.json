@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Nascom 2",
+    "clazz": "com.codingrodent.emulator.cards.nascom2cpu.Nascom2CPUCard",
+    "order": "0",
+    "properties": {
+      "VideoROM": "resources/hexdumpImages/ROM/system/CharacterGraphicsROM.nas",
+      "OperatingSystem": "resources/hexdumpImages/ROM/system/nassys1.nas",
+      "VideoRAMAddress": "0800",
+      "ScratchpadAddress": "0C00",
+      "StartAddress": "0000",
+      "BankAEnabled": "false",
+      "BankBEnabled": "false",
+      "nup": "false"
+    }
+  }
+]
+
+
+
+
+

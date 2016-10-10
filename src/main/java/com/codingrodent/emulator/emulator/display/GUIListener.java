@@ -30,7 +30,7 @@ import com.codingrodent.emulator.emulator.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.io.File;
-import java.util.ArrayList;
+import java.util.List;
 
 /*
  * event listeners for processing GUI events
@@ -136,9 +136,6 @@ class GUIListener implements ActionListener, ItemListener {
                                                     if ("Save Memory Image".equals(menuCommand)) {
                                                         JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
                                                         fc.setFileFilter(new nasFileFilter());
-                                                        //JLabel label = new JLabel("Dump 64K memory image to file");
-                                                        //label.setForeground(Color.red);
-                                                        //fc.add(label);
                                                         int returnValue = fc.showSaveDialog(frame);
                                                         if (returnValue == JFileChooser.APPROVE_OPTION) {
                                                             File file = fc.getSelectedFile();
@@ -152,7 +149,7 @@ class GUIListener implements ActionListener, ItemListener {
                                                         } else {
                                                             if ("About".equals(menuCommand)) {
                                                                 StringBuilder aboutString = new StringBuilder("Cards loaded:\n\n");
-                                                                ArrayList<CardData> cards = context.getAllCards();
+                                                                List<CardData> cards = context.getAllCards();
                                                                 for (CardData card : cards) {
                                                                     aboutString.append(card.getDetails()).append('\n');
                                                                 }

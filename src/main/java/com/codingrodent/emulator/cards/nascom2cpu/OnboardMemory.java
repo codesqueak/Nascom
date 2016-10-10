@@ -31,7 +31,7 @@ import com.codingrodent.emulator.utilities.*;
 import com.codingrodent.microprocessor.IMemory;
 
 import java.io.IOException;
-import java.util.Properties;
+import java.util.Map;
 
 class OnboardMemory implements IMemory {
 
@@ -52,7 +52,7 @@ class OnboardMemory implements IMemory {
     private final SystemContext systemContext;
     //
     private StandardDisplayDevice displayDevice;
-    private Properties cardProperties;
+    private Map<String, String> cardProperties;
     private INasBus nasBus;
     // Nascom 2 Onboard Memory
     private boolean basicROMInstalled;
@@ -88,7 +88,7 @@ class OnboardMemory implements IMemory {
      *
      * @param cardProperties Property list
      */
-    void setCardProperties(Properties cardProperties) {
+    void setCardProperties(Map<String, String> cardProperties) {
         this.cardProperties = cardProperties;
     }
 
@@ -108,7 +108,7 @@ class OnboardMemory implements IMemory {
         try {
             FileHandler fileHandler = new FileHandler();
             //
-            String property = cardProperties.getProperty("OperatingSystem");
+            String property = cardProperties.get("OperatingSystem");
             if (null != property) {
                 MemoryChunk nasSys = fileHandler.readHexDumpFile(property);
                 short[] rom = nasSys.getMemoryChunk();
@@ -123,7 +123,7 @@ class OnboardMemory implements IMemory {
                 }
             }
             //
-            property = cardProperties.getProperty("8KROM");
+            property = cardProperties.get("8KROM");
             if (null != property) {
                 MemoryChunk romBasic = fileHandler.readHexDumpFile(property);
                 short[] rom = romBasic.getMemoryChunk();
@@ -142,19 +142,19 @@ class OnboardMemory implements IMemory {
                 }
             }
             // Default video memory locations
-            videoRAMBase = Utilities.getHexValue(cardProperties.getProperty("VideoRAMAddress", "0800"));
+            videoRAMBase = Utilities.getHexValue(cardProperties.getOrDefault("VideoRAMAddress", "0800"));
             videoRAMEnd = videoRAMBase + 1024;
             //
             // Default scratchpad memory locations
-            scratchpadRAMBase = Utilities.getHexValue(cardProperties.getProperty("ScratchpadAddress", "0C00"));
+            scratchpadRAMBase = Utilities.getHexValue(cardProperties.getOrDefault("ScratchpadAddress", "0C00"));
             scratchpadRAMEnd = scratchpadRAMBase + 1024;
             //
             // Bank A memory
             String epromAType = null;
-            String bankAEnabled = cardProperties.getProperty("BankAEnabled");
+            String bankAEnabled = cardProperties.get("BankAEnabled");
             if (bankAEnabled.equals("true")) {
-                bankABase = Utilities.getHexValue(cardProperties.getProperty("BankAAddress", "C000"));
-                epromAType = cardProperties.getProperty("BankAType");
+                bankABase = Utilities.getHexValue(cardProperties.getOrDefault("BankAAddress", "C000"));
+                epromAType = cardProperties.get("BankAType");
                 if (null != epromAType) {
                     if ("2708".equals(epromAType)) {
                         bankAEnd = bankABase + 4096;
@@ -182,7 +182,7 @@ class OnboardMemory implements IMemory {
                         }
                     }
                     //
-                    property = cardProperties.getProperty("BankAFile");
+                    property = cardProperties.get("BankAFile");
                     if (null != property) {
                         MemoryChunk bankAfile = fileHandler.readHexDumpFile(property);
                         short[] rom = bankAfile.getMemoryChunk();
@@ -200,10 +200,10 @@ class OnboardMemory implements IMemory {
             //
             // Bank B memory
             String epromBType = null;
-            String bankBEnabled = cardProperties.getProperty("BankBEnabled");
+            String bankBEnabled = cardProperties.get("BankBEnabled");
             if (bankBEnabled.equals("true")) {
-                bankBBase = Utilities.getHexValue(cardProperties.getProperty("BankBAddress", "D000"));
-                epromBType = cardProperties.getProperty("BankBType");
+                bankBBase = Utilities.getHexValue(cardProperties.getOrDefault("BankBAddress", "D000"));
+                epromBType = cardProperties.get("BankBType");
                 if (null != epromBType) {
                     if ("2708".equals(epromBType)) {
                         bankBEnd = bankBBase + 4096;
@@ -231,7 +231,7 @@ class OnboardMemory implements IMemory {
                         }
                     }
                     //
-                    property = cardProperties.getProperty("BankBFile");
+                    property = cardProperties.get("BankBFile");
                     if (null != property) {
                         MemoryChunk bankBfile = fileHandler.readHexDumpFile(property);
                         short[] rom = bankBfile.getMemoryChunk();

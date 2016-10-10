@@ -34,7 +34,7 @@ import com.codingrodent.microprocessor.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
-import java.util.Properties;
+import java.util.Map;
 
 public class Nascom2CPUCard implements ICard, ICPUControl, INasBus {
     private final static String TAPE = "Tape";
@@ -46,7 +46,7 @@ public class Nascom2CPUCard implements ICard, ICPUControl, INasBus {
     private final SystemContext systemContext;
     private final KeyboardHandler keyboardHandler;
     private String cardName;
-    private Properties cardProperties;
+    private Map<String, String> cardProperties;
     private boolean run;
     private int NMICounter;
     private boolean nupMode = false;
@@ -89,7 +89,7 @@ public class Nascom2CPUCard implements ICard, ICPUControl, INasBus {
         StandardDisplayDevice display;
         try {
             FileHandler fileHandler = new FileHandler();
-            MemoryChunk videoROM = fileHandler.readHexDumpFile(cardProperties.getProperty("VideoROM"));
+            MemoryChunk videoROM = fileHandler.readHexDumpFile(cardProperties.get("VideoROM"));
             display = new StandardDisplayDevice(videoROM);
         } catch (IOException ex) {
             String msg = "Unable to load the video ROM, <" + ex.getMessage() + ">";
@@ -108,10 +108,10 @@ public class Nascom2CPUCard implements ICard, ICPUControl, INasBus {
      * @param cardProperties Property list
      */
     @Override
-    public void setCardProperties(Properties cardProperties) {
+    public void setCardProperties(Map<String, String> cardProperties) {
         this.cardProperties = cardProperties;
         //
-        String property = cardProperties.getProperty("nup");
+        String property = cardProperties.get("nup");
         if (null != property) {
             nupMode = "true".equals(property);
         }
@@ -243,7 +243,7 @@ public class Nascom2CPUCard implements ICard, ICPUControl, INasBus {
         systemContext.logInfoEvent("Start Execution");
         processor.reset();
         run = true;
-        int startAddress = Utilities.getHexValue(cardProperties.getProperty("StartAddress", "0000"));
+        int startAddress = Utilities.getHexValue(cardProperties.getOrDefault("StartAddress", "0000"));
         if ((startAddress < 0) | (startAddress) > 0xFFFF) {
             systemContext.logErrorEvent("Start address is not in the range 0x0000 to 0xFFFF");
             return;
