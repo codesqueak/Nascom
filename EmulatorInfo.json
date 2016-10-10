@@ -13,6 +13,19 @@
       "BankBEnabled": "false",
       "nup": "false"
     }
+  },
+  {
+    "name": "Nascom RAM 'A'",
+    "clazz": "com.codingrodent.emulator.cards.nascommemory.Nascom32KRAMA",
+    "order": "1",
+    "properties": {
+      "StartAddress": "1000",
+      "Size": "32K",
+      "ROMEnabled": "true",
+      "ROM": "resources/hexdumpImages/ROM/system/NAS_DOS_14.nas",
+      "ROMAddress": "D000",
+      "EPROMType": "2708"
+    }
   }
 ]
 

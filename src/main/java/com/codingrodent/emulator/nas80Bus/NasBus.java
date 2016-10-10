@@ -133,7 +133,7 @@ class NasBus implements INasBus {
     }
 
     /**
-     * Write data to the memory bus, not including slot 0 with is spporting the CPU
+     * Write data to the memory bus, not including slot 0 which is supporting the CPU
      *
      * @param address Address to write to
      * @param data    Data to be written
@@ -255,7 +255,7 @@ class NasBus implements INasBus {
     }
 
     /**
-     * A processor halt as occured
+     * A processor halt as occurred
      */
     @Override
     public void halt() {

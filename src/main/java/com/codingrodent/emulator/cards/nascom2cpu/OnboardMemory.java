@@ -152,7 +152,7 @@ class OnboardMemory implements IMemory {
             // Bank A memory
             String epromAType = null;
             String bankAEnabled = cardProperties.get("BankAEnabled");
-            if (bankAEnabled.equals("true")) {
+            if (bankAEnabled.equalsIgnoreCase("true")) {
                 bankABase = Utilities.getHexValue(cardProperties.getOrDefault("BankAAddress", "C000"));
                 epromAType = cardProperties.get("BankAType");
                 if (null != epromAType) {
@@ -201,7 +201,7 @@ class OnboardMemory implements IMemory {
             // Bank B memory
             String epromBType = null;
             String bankBEnabled = cardProperties.get("BankBEnabled");
-            if (bankBEnabled.equals("true")) {
+            if (bankBEnabled.equalsIgnoreCase("true")) {
                 bankBBase = Utilities.getHexValue(cardProperties.getOrDefault("BankBAddress", "D000"));
                 epromBType = cardProperties.get("BankBType");
                 if (null != epromBType) {

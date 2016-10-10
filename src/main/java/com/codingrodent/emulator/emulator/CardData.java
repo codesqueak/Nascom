@@ -42,12 +42,12 @@ public class CardData {
         return name;
     }
 
-    public String getDetails() {
-        return details;
-    }
-
     public void setName(final String name) {
         this.name = name;
+    }
+
+    public String getDetails() {
+        return details;
     }
 
     public void setDetails(final String details) {

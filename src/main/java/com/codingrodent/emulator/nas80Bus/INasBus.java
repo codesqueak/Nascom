@@ -78,7 +78,7 @@ public interface INasBus {
     void reset();
 
     /**
-     * A processor halt as occured
+     * A processor halt as occurred
      */
     void halt();
 
