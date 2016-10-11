@@ -30,7 +30,6 @@ import com.codingrodent.emulator.emulator.display.PrimaryDisplay;
 import com.codingrodent.emulator.nas80Bus.CardController;
 import org.apache.logging.log4j.*;
 
-import java.net.*;
 import java.util.List;
 
 /**
@@ -43,7 +42,6 @@ public class SystemContext {
     private ProcessEmulatorInfoFile emulatorInfo;
     private PrimaryDisplay primaryDisplay;
     private CardController cardController;
-    private ClassLoader loader;
 
     /**
      * Standard constructor. Only one copy needed per VM so obtain via reference via createInstance(). Any failure here will cause a system exit().
@@ -52,7 +50,6 @@ public class SystemContext {
         try {
             // system settings
             emulatorInfo = new ProcessEmulatorInfoFile();
-            loader = generateClassLoader();
         } catch (Exception e) {
             String msg = "System failed to start in SystemContext : " + e.getMessage();
             logFatalEvent(msg);
@@ -169,22 +166,6 @@ public class SystemContext {
      */
     public ICPUControl getCPUCard() {
         return cardController.getCPU();
-    }
-
-    /**
-     * Custom class loader for getting .jar files
-     *
-     * @return Local classloader
-     */
-    private ClassLoader generateClassLoader() {
-        URL[] urlsToLoadFrom;
-        try {
-            urlsToLoadFrom = new URL[]{new URL("file:E:/Projects/Nascom2Emulator/ext")};
-            loader = new URLClassLoader(urlsToLoadFrom);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-        return loader;
     }
 
 }

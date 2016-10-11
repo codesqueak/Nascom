@@ -5,13 +5,27 @@
     "order": "0",
     "properties": {
       "VideoROM": "resources/hexdumpImages/ROM/system/CharacterGraphicsROM.nas",
-      "OperatingSystem": "resources/hexdumpImages/ROM/system/Nassys1.nas",
+      "OperatingSystem": "resources/hexdumpImages/ROM/system/NAS_SYS_3.nas",
+      "8KROM": "resources/hexdumpImages/ROM/system/ROM_BASIC.nas",
       "VideoRAMAddress": "0800",
       "ScratchpadAddress": "0C00",
       "StartAddress": "0000",
       "BankAEnabled": "false",
       "BankBEnabled": "false",
       "nup": "false"
+    }
+  },
+  {
+    "name": "Nascom RAM 'A'",
+    "clazz": "com.codingrodent.emulator.cards.nascommemory.Nascom32KRAMA",
+    "order": "1",
+    "properties": {
+      "StartAddress": "1000",
+      "Size": "32K",
+      "ROMEnabled": "true",
+      "ROM": "resources/hexdumpImages/ROM/system/NAS_DOS_14.nas",
+      "ROMAddress": "D000",
+      "EPROMType": "2708"
     }
   }
 ]

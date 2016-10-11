@@ -130,7 +130,7 @@ public class CardController {
     }
 
     /**
-     * Dump teh whole 64K as a single image
+     * Dump the whole 64K as a single image
      *
      * @param fileName String File name to dump to
      * @param frame    JFrame Frame in which to display error dialog

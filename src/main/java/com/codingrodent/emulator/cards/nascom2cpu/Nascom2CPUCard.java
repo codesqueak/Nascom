@@ -43,7 +43,7 @@ public class Nascom2CPUCard implements ICard, ICPUControl, INasBus {
     private final IMemory memory;
     private final IBaseDevice ioDevices;
     private final Z80CPU processor;
-    private final SystemContext systemContext;
+    private final SystemContext systemContext = SystemContext.createInstance();
     private final KeyboardHandler keyboardHandler;
     private String cardName;
     private Map<String, String> cardProperties;
@@ -55,7 +55,6 @@ public class Nascom2CPUCard implements ICard, ICPUControl, INasBus {
      * Standard constructor to produce a Nascom 2 CPU card
      */
     public Nascom2CPUCard() {
-        systemContext = SystemContext.createInstance();
         memory = new OnboardMemory();
         ioDevices = new OnboardIO();
         processor = new Z80CPU(memory, ioDevices);
@@ -396,7 +395,7 @@ public class Nascom2CPUCard implements ICard, ICPUControl, INasBus {
     }
 
     /**
-     * A processor halt as occured
+     * A processor halt as occurred
      */
     @Override
     public void halt() {
