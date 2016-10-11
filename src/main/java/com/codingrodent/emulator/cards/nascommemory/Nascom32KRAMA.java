@@ -76,11 +76,13 @@ public class Nascom32KRAMA implements ICard, INasBus {
                 String filename = cardProperties.get("ROM");
                 MemoryChunk eprom = fileHandler.readHexDumpFile(filename);
                 short[] rom = eprom.getMemoryChunk();
-                epromBase = eprom.getBase();
+                epromBase = Utilities.getHexValue(cardProperties.getOrDefault("ROMAddress", "D000"));
                 int length = eprom.getSize();
                 epromTopAddress = epromBase + length;
                 if (4096 != length) {
-                    systemContext.logWarnEvent("The EPROM is not 4K bytes (" + length + " bytes found)");
+                    String msg = "The EPROM is not 4K bytes (" + length + " bytes found)";
+                    systemContext.logFatalEvent(msg);
+                    throw new RuntimeException(msg);
                 }
                 System.arraycopy(rom, 0, memory, epromBase, length);
                 systemContext.logInfoEvent("Loaded a file for EPROM, " + filename);
@@ -91,11 +93,9 @@ public class Nascom32KRAMA implements ICard, INasBus {
                 throw new RuntimeException(msg);
             }
         }
-        if (romInstalled) {
-            for (int address = baseAddress; address < MEMORY_SIZE; address++) {
-                romValid[address] = romInstalled && (epromBase <= address) && (address < epromTopAddress);
-                ramValid[address] = (baseAddress <= address) && (address < topAddress);
-            }
+        for (int address = 0; address < MEMORY_SIZE; address++) {
+            romValid[address] = romInstalled && (epromBase <= address) && (address < epromTopAddress);
+            ramValid[address] = (address >= baseAddress) && (address < topAddress);
         }
         reset();
     }
@@ -117,7 +117,6 @@ public class Nascom32KRAMA implements ICard, INasBus {
      */
     @Override
     public void setNasBus(INasBus nasBus) {
-        //this.nasBus = nasBus;
     }
 
     /**
@@ -220,11 +219,13 @@ public class Nascom32KRAMA implements ICard, INasBus {
      *
      * @param address The address to be written to
      * @param data    The byte to be written
+     * @return True if no more memory writes to be performed
      */
     @Override
     public boolean memoryWrite(int address, int data, boolean ramdis) {
         if ((!ramdis) && ramValid[address]) {
             memory[address] = (short) data;
+            return true;
         }
         return false;
     }

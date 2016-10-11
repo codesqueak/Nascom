@@ -127,19 +127,17 @@ class OnboardMemory implements IMemory {
             if (null != property) {
                 MemoryChunk romBasic = fileHandler.readHexDumpFile(property);
                 short[] rom = romBasic.getMemoryChunk();
-                int base = romBasic.getBase();
+                int base = 0xE000;
                 int length = romBasic.getSize();
                 if (8192 != length) {
-                    systemContext.logWarnEvent("The 8K ROM is not 8K bytes (" + length + " bytes found)");
+                    String msg = "The 8K ROM is not 8K bytes (" + length + " bytes found)";
+                    systemContext.logFatalEvent(msg);
+                    throw new RuntimeException(msg);
                 }
-                if (0xE000 != base) {
-                    systemContext.logErrorEvent("The 8K ROM does not start at E000H - Ignored");
-                } else {
-                    System.arraycopy(rom, 0, memory, base, length);
-                    basicROMInstalled = true;
-                    basicROMBase = base;
-                    basicROMEnd = basicROMBase + 8192;
-                }
+                System.arraycopy(rom, 0, memory, base, length);
+                basicROMInstalled = true;
+                basicROMBase = base;
+                basicROMEnd = basicROMBase + 8192;
             }
             // Default video memory locations
             videoRAMBase = Utilities.getHexValue(cardProperties.getOrDefault("VideoRAMAddress", "0800"));

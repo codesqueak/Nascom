@@ -64,9 +64,6 @@ public class FileHandler {
                 break;
             }
             line = inputLine.trim();
-            //System.out.println("<" + line + ">");
-
-            // convert and place into memory
             address = Utilities.getHexValue(line.substring(0, 4));
             //System.out.println("Address : " + address + " : " + line.substring(0, 4));
             if (firstTime) {
