@@ -35,7 +35,7 @@ import java.util.*;
  */
 public class ProcessEmulatorInfoFile {
 
-    private static final String EMULATOR_INFO_FILE = "emulatorInfo.json";
+    private static final String EMULATOR_INFO_FILE = "EmulatorInfo.json";
     private List<CardData> cardInfo;
 
     /**

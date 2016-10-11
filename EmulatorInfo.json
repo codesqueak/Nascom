@@ -5,7 +5,7 @@
     "order": "0",
     "properties": {
       "VideoROM": "resources/hexdumpImages/ROM/system/CharacterGraphicsROM.nas",
-      "OperatingSystem": "resources/hexdumpImages/ROM/system/nassys1.nas",
+      "OperatingSystem": "resources/hexdumpImages/ROM/system/Nassys1.nas",
       "VideoRAMAddress": "0800",
       "ScratchpadAddress": "0C00",
       "StartAddress": "0000",
