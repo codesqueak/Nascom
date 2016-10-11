@@ -84,23 +84,8 @@ public class MemoryChunk {
      * @param data Data to write
      */
     public void writeByte(int data) {
-        if (data < 0) {
-            data = 0x100 + data;
-        }
         memory[address++] = (short) data;
         size++;
-    }
-
-    /**
-     * Write a byte of data to a memory location.  The address is automatically incremented.
-     *
-     * @param data Data to write
-     */
-    public void setByte(int data) {
-        if (data < 0) {
-            data = 0x100 + data;
-        }
-        memory[address++] = (short) data;
     }
 
     /**
