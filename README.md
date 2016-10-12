@@ -19,7 +19,7 @@ At present the available version of the Jacoco plugin (2.0.1 at time of writing)
 ### Instructions
 
 1. Clone the project and load into your favourite IDE
-2. Execute the Emeulator.clas in NasBusEmulator
+2. Execute the Emulator.class in NasBusEmulator
 3. Enjoy that 4MHz goodness !
 
 ###Configuration:
