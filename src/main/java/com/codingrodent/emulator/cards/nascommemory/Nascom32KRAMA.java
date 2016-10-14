@@ -25,25 +25,16 @@
 
 package com.codingrodent.emulator.cards.nascommemory;
 
-import com.codingrodent.emulator.cards.ICard;
-import com.codingrodent.emulator.emulator.SystemContext;
-import com.codingrodent.emulator.nas80Bus.INasBus;
+import com.codingrodent.emulator.cards.common.MemoryCard;
 import com.codingrodent.emulator.utilities.*;
 
-import java.awt.event.ActionEvent;
 import java.io.IOException;
-import java.util.Map;
 
-public class Nascom32KRAMA implements ICard, INasBus {
+public class Nascom32KRAMA extends MemoryCard {
 
-    private final static int MEMORY_SIZE = 64 * 1024;
     private final short[] memory = new short[MEMORY_SIZE];
     private final boolean[] ramValid = new boolean[MEMORY_SIZE];
     private final boolean[] romValid = new boolean[MEMORY_SIZE];
-    private final SystemContext systemContext = SystemContext.createInstance();
-    private String cardName;
-    private Map<String, String> cardProperties;
-    private boolean romInstalled = false;
 
     public Nascom32KRAMA() {
     }
@@ -53,6 +44,7 @@ public class Nascom32KRAMA implements ICard, INasBus {
      */
     @Override
     public void initialise() {
+        boolean romInstalled = false;
         int baseAddress, topAddress;
         baseAddress = Utilities.getHexValue(cardProperties.getOrDefault("BaseAddress", "1000"));
         String size = cardProperties.getOrDefault("Size", "32K");
@@ -93,30 +85,12 @@ public class Nascom32KRAMA implements ICard, INasBus {
                 throw new RuntimeException(msg);
             }
         }
+        // Set RAM / ROM flags for faster access
         for (int address = 0; address < MEMORY_SIZE; address++) {
             romValid[address] = romInstalled && (epromBase <= address) && (address < epromTopAddress);
             ramValid[address] = (address >= baseAddress) && (address < topAddress);
         }
         reset();
-    }
-
-    /**
-     * Set any card specific parameters
-     *
-     * @param cardProperties Property list
-     */
-    @Override
-    public void setCardProperties(Map<String, String> cardProperties) {
-        this.cardProperties = cardProperties;
-    }
-
-    /**
-     * Identify the NAS BUS to the card
-     *
-     * @param nasBus The NAS BUS controller object
-     */
-    @Override
-    public void setNasBus(INasBus nasBus) {
     }
 
     /**
@@ -142,48 +116,6 @@ public class Nascom32KRAMA implements ICard, INasBus {
     }
 
     /**
-     * Does the card support input at the address specified
-     *
-     * @param address The address to test
-     * @return True is port, else false
-     */
-    @Override
-    public boolean isInputPort(int address) {
-        return false;
-    }
-
-    /**
-     * Does the card support output at the address specified
-     *
-     * @param address The address to test
-     * @return True is port, else false
-     */
-    @Override
-    public boolean isOutputPort(int address) {
-        return false;
-    }
-
-    /**
-     * Get a human readable name for the card
-     *
-     * @return Card name string
-     */
-    @Override
-    public String getCardName() {
-        return cardName;
-    }
-
-    /**
-     * Set a human readable name for the card
-     *
-     * @param cardName Card name string
-     */
-    @Override
-    public void setCardName(String cardName) {
-        this.cardName = cardName;
-    }
-
-    /**
      * Get the details of the card by the author
      *
      * @return Card name string
@@ -191,27 +123,6 @@ public class Nascom32KRAMA implements ICard, INasBus {
     @Override
     public String getCardDetails() {
         return "Nascom RAM 'A' Card - Version 1.0";
-    }
-
-    /**
-     * Report if the card is a CPU card
-     *
-     * @return True if a cpu, else false
-     */
-    @Override
-    public boolean isCPU() {
-        return false;
-    }
-
-    /**
-     * Reset the card page mode setup
-     */
-    @Override
-    public void reset() {
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
     }
 
     /**
@@ -257,36 +168,8 @@ public class Nascom32KRAMA implements ICard, INasBus {
         if (ramValid[address] || romValid[address]) {
             return memory[address];
         } else {
-            return 0x7F;
+            return BUS_FLOAT;
         }
-    }
-
-    /**
-     * Write data to the io bus
-     *
-     * @param address Address to write to
-     * @param data    Data to be written
-     */
-    @Override
-    public void ioWrite(int address, int data) {
-    }
-
-    /**
-     * Read data from the io bus
-     *
-     * @param address Address to read from
-     * @return Byte of data
-     */
-    @Override
-    public int ioRead(int address) {
-        return 0X7F;
-    }
-
-    /**
-     * A processor halt as occurred
-     */
-    @Override
-    public void halt() {
     }
 
     /**
@@ -310,25 +193,6 @@ public class Nascom32KRAMA implements ICard, INasBus {
     @Override
     public boolean assertRAMDIScapable(int address) {
         return romValid[address];
-    }
-
-    /**
-     * Recover the number of T states executed by the CPU
-     *
-     * @return long
-     */
-    @Override
-    public long getClock() {
-        return -1;
-    }
-
-    /**
-     * Set the number of T states executed by the CPU
-     *
-     * @param t long
-     */
-    @Override
-    public void setClock(long t) {
     }
 
 }
