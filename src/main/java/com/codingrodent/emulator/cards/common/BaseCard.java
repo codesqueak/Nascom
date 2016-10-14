@@ -39,6 +39,7 @@ public abstract class BaseCard implements ICard, INasBus {
     //
     protected final SystemContext systemContext = SystemContext.createInstance();
     protected Map<String, String> cardProperties;
+    protected INasBus nasBus;
     //
     private String cardName;
 
@@ -59,6 +60,7 @@ public abstract class BaseCard implements ICard, INasBus {
      */
     @Override
     public void setNasBus(INasBus nasBus) {
+        this.nasBus = nasBus;
     }
 
     /**

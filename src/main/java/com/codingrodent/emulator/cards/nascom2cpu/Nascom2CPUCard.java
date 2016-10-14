@@ -128,6 +128,15 @@ public class Nascom2CPUCard implements ICard, ICPUControl, INasBus {
     }
 
     /**
+     * Get the NAS BUS implementation
+     *
+     * @return The NAS BUS controller object
+     */
+    public INasBus getNasBus() {
+        return null;
+    }
+
+    /**
      * Does the card support RAM at the address specified
      *
      * @param address The address to test
