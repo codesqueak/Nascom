@@ -11,8 +11,7 @@
       "ScratchpadAddress": "0C00",
       "StartAddress": "0000",
       "BankAEnabled": "false",
-      "BankBEnabled": "false",
-      "nup": "false"
+      "BankBEnabled": "false"
     }
   },
   {
@@ -24,8 +23,7 @@
       "Size": "32K",
       "ROMEnabled": "true",
       "ROM": "resources/hexdumpImages/ROM/system/NAS_DOS_14.nas",
-      "ROMAddress": "D000",
-      "EPROMType": "2708"
+      "ROMAddress": "D000"
     }
   }
 ]

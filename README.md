@@ -37,7 +37,7 @@ The emulator.json file consists of an array of configurations, one for each card
  3. order - which bus slow the card resides in. The CPU / bus master must be the first card in order
  4. properties - name / value pairs for card unique configuration
 
-The default emulatorInfo.xml configures a single 4MHz Nascom II with a 32K RAM 'A' card, as shown below.
+The default emulatorInfo.json configures a single 4MHz Nascom II with a 32K RAM 'A' card, as shown below.
 ```
 [
   {
