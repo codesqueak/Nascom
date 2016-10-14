@@ -62,7 +62,7 @@ public class NasToBinFileConverter {
         for (String allFile : allFiles) {
             System.out.println("----- Converting: " + allFile + " -----");
             File in = new File(path + File.separator + allFile);
-            File out = new File(path + File.separator + allFile + ".BIN");
+            File out = new File(path + File.separator + allFile + ".bin");
             try {
                 LineNumberReader lr = new LineNumberReader(new BufferedReader(new InputStreamReader(new FileInputStream(in), "UTF-8")));
                 FileOutputStream fos = new FileOutputStream(out);

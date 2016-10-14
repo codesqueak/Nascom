@@ -33,7 +33,7 @@ import java.util.*;
 /**
  * This class holds an internal representation of the machineInfo.xml document.
  */
-public class ProcessEmulatorInfoFile {
+class ProcessEmulatorInfoFile {
 
     private static final String EMULATOR_INFO_FILE = "EmulatorInfo.json";
     private List<CardData> cardInfo;
