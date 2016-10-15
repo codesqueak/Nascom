@@ -118,7 +118,7 @@ public class DiskImage {
             fis.close();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Unable to load disk image. " + e.getMessage());
         }
     }
 

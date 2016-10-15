@@ -65,7 +65,7 @@ public class CardController {
         cardsLoaded = 0;
         List<CardData> cards = systemContext.getAllCards();
         if (cards.isEmpty()) {
-            String msg = "No cards defined in emulatorInfo.xml";
+            String msg = "No cards defined in emulatorInfo.json";
             systemContext.logErrorEvent(msg);
             throw new RuntimeException(msg);
         } else {
@@ -75,7 +75,6 @@ public class CardController {
                 try {
                     Class<?> card = Class.forName(className);
                     ICard genericCard = (ICard) card.newInstance();
-                    genericCard.setCardName(cardData.getName());
                     genericCard.setCardProperties(cardData.getProperties());
                     cardData.setDetails(genericCard.getCardDetails());
                     genericCard.setNasBus(nasBus);

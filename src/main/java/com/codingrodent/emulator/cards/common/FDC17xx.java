@@ -41,7 +41,7 @@ public abstract class FDC17xx extends BaseCard {
 
     //
     public enum FDC_CHIP {
-        FDC_1771, FDC_1791, FDC_1793
+        FDC_1771, FDC_1791, FDC_1793, FDC_1795, FDC_1797
     }
 
     protected FDC17xx() {
@@ -63,11 +63,23 @@ public abstract class FDC17xx extends BaseCard {
                     case 128:
                         return 0x00;
                     case 256:
+                        return 0x01;
+                    case 512:
+                        return 0x10;
+                    case 1024:
+                        return 0x11;
+                }
+            case FDC_1795:
+            case FDC_1797:
+                switch (length) {
+                    case 256:
                         return 0x00;
                     case 512:
-                        return 0x00;
+                        return 0x01;
                     case 1024:
-                        return 0x00;
+                        return 0x10;
+                    case 128:
+                        return 0x11;
                 }
         }
         return 0xFF;
@@ -115,7 +127,6 @@ public abstract class FDC17xx extends BaseCard {
             File file = fc.getSelectedFile();
             String fileName = file.getAbsolutePath();
             systemContext.logDebugEvent("Saving disk image to " + fileName);
-            // fdc.saveDisk(drive, fileName);
             switch (drive) {
                 default:
                     disk0.dumpANADiskToFile(fileName, fdc);
@@ -250,8 +261,8 @@ public abstract class FDC17xx extends BaseCard {
                     disk3.diskDumpReader(new File(fileName), tracks, sectors, size, sides);
                     break;
             }
-        } catch (Exception ex) {
-            systemContext.logInfoEvent("File failed to load (" + ex.getMessage() + ")");
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to load disk image. " + e.getMessage());
         }
     }
 

@@ -369,16 +369,6 @@ class OnboardMemory implements IMemory {
     }
 
     /**
-     * Will a read to an address cause RAMDIS (i.e. ROM) to be asserted
-     *
-     * @param address The address to read from
-     * @return true if RAMDIS is to be asserted, else false
-     */
-    boolean assertRAMDIS(int address) {
-        return false;
-    }
-
-    /**
      * Does the card support RAM at the address specified
      *
      * @param address The address to test

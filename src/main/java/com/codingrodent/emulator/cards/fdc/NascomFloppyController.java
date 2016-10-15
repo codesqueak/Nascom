@@ -114,7 +114,9 @@ public class NascomFloppyController extends FDC17xx {
      */
     @Override
     public void initialise() {
+        // Load files in Anadisk format (.dmp)
         processANADiskImages();
+        // Load files in disk dump format (.dsk)
         processDumpDiskImages();
     }
 
@@ -389,13 +391,6 @@ public class NascomFloppyController extends FDC17xx {
     @Override
     public int ioRead(int address) {
         return ioRead2(address);
-    }
-
-    /**
-     * A processor halt as occured
-     */
-    @Override
-    public void halt() {
     }
 
     /**

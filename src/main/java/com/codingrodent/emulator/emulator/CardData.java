@@ -25,25 +25,22 @@
 
 package com.codingrodent.emulator.emulator;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.Map;
 
 public class CardData {
 
-    private String name;
+    @Expose
     private String details;
+    @Expose
     private String clazz;
+    @Expose
     private int order;
+    @Expose
     private Map<String, String> properties;
 
     public CardData() {
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
     }
 
     public String getDetails() {
@@ -58,23 +55,11 @@ public class CardData {
         return clazz;
     }
 
-    public void setClazz(final String clazz) {
-        this.clazz = clazz;
-    }
-
-    public int getOrder() {
+    int getOrder() {
         return order;
-    }
-
-    public void setOrder(final int order) {
-        this.order = order;
     }
 
     public Map<String, String> getProperties() {
         return properties;
-    }
-
-    public void setProperties(final Map<String, String> properties) {
-        this.properties = properties;
     }
 }

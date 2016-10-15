@@ -150,44 +150,44 @@ public class PrimaryDisplay extends JFrame {
     }
 
     //
-    void set2MHz(boolean state) {
-        MHz2.setEnabled(state);
+    void set2MHz() {
+        MHz2.setEnabled(true);
     }
 
-    void set2MHz() {
+    void enable2MHz() {
         MHz2.setState(true);
         MHz4.setState(false);
         MHz6.setState(false);
         MHzMax.setState(false);
     }
 
-    void set4MHz(boolean state) {
-        MHz4.setEnabled(state);
+    void set4MHz() {
+        MHz4.setEnabled(true);
     }
 
-    void set4MHz() {
+    void enable4MHz() {
         MHz2.setState(false);
         MHz4.setState(true);
         MHz6.setState(false);
         MHzMax.setState(false);
     }
 
-    void setMHzMax(boolean state) {
-        MHzMax.setEnabled(state);
+    void setMHzMax() {
+        MHzMax.setEnabled(true);
     }
 
-    void setMHzMax() {
+    void enableMHzMax() {
         MHz2.setState(false);
         MHz4.setState(false);
         MHz6.setState(false);
         MHzMax.setState(true);
     }
 
-    void set6MHz(boolean state) {
-        MHz6.setEnabled(state);
+    void set6MHz() {
+        MHz6.setEnabled(true);
     }
 
-    void set6MHz() {
+    void enable6MHz() {
         MHz2.setState(false);
         MHz4.setState(false);
         MHz6.setState(true);
