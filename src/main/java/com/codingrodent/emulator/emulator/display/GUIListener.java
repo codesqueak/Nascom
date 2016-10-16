@@ -50,7 +50,6 @@ class GUIListener implements ActionListener, ItemListener {
      * @param e ActionEvent
      */
     @Override
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("DM_EXIT")
     public void actionPerformed(ActionEvent e) {
         String menuCommand = e.getActionCommand();
         PrimaryDisplay screenFrame = SystemContext.createInstance().getPrimaryDisplay();

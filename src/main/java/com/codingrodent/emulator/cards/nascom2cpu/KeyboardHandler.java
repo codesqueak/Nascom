@@ -25,8 +25,6 @@
 
 package com.codingrodent.emulator.cards.nascom2cpu;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import java.awt.event.*;
 
 class KeyboardHandler implements KeyListener, WindowFocusListener {
@@ -331,7 +329,6 @@ class KeyboardHandler implements KeyListener, WindowFocusListener {
      * release the key press
      */
     @Override
-    @SuppressFBWarnings("SWL_SLEEP_WITH_LOCK_HELD")
     public void keyReleased(KeyEvent e) {
         synchronized (buffer) {
             // Put a delay in the keyboard routine so that key presses are not

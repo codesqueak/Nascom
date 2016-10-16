@@ -34,6 +34,8 @@ public class CardData {
     @Expose
     private String details;
     @Expose
+    private String name;
+    @Expose
     private String clazz;
     @Expose
     private int order;
@@ -48,6 +50,10 @@ public class CardData {
 
     public String getDetails() {
         return details;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setDetails(final String details) {

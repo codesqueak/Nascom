@@ -76,6 +76,7 @@ public class CardController {
                     Class<?> card = Class.forName(className);
                     ICard genericCard = (ICard) card.newInstance();
                     genericCard.setCardProperties(cardData.getProperties());
+                    genericCard.setCardName(cardData.getName());
                     cardData.setDetails(genericCard.getCardDetails());
                     genericCard.setNasBus(nasBus);
                     genericCard.initialise();

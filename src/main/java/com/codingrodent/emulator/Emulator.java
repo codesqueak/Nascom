@@ -1,3 +1,4 @@
+package com.codingrodent.emulator;
 /*
  * MIT License
  *

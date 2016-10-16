@@ -27,7 +27,6 @@ package com.codingrodent.emulator.cards.nascom2cpu;
 
 import com.codingrodent.microprocessor.*;
 import com.codingrodent.microprocessor.Z80.Z80Core;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 class Z80CPU extends Z80Core {
     /* throttling constants */
@@ -85,7 +84,6 @@ class Z80CPU extends Z80Core {
      *
      * @throws ProcessorException Thrown if an unexpected state arises
      */
-    @SuppressFBWarnings("SWL_SLEEP_WITH_LOCK_HELD")
     synchronized void execute() throws ProcessorException {
         if (nupMode) {
             if (0x1000 == getProgramCounter()) {
