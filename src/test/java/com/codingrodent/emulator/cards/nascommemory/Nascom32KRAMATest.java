@@ -1,5 +1,6 @@
 package com.codingrodent.emulator.cards.nascommemory;
 
+import com.codingrodent.emulator.cards.ram.Nascom32KRAMA;
 import org.junit.*;
 
 import java.util.*;

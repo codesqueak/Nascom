@@ -10,28 +10,41 @@
       "VideoRAMAddress": "0800",
       "ScratchpadAddress": "0C00",
       "StartAddress": "0000",
-      "BankAEnabled": "false",
+      "BankAEnabled": "true",
+      "BankAAddress": "D000",
+      "BankAType": "2708",
+      "BankAFile": "resources/hexdumpImages/ROM/system/NAS_DOS_14.nas",
       "BankBEnabled": "false"
     }
   },
+  //  {
+  //    "name": "Nascom RAM 'A'",
+  //    "clazz": "com.codingrodent.emulator.cards.ram.Nascom32KRAMA",
+  //    "order": "1",
+  //    "properties": {
+  //      "StartAddress": "1000",
+  //      "Size": "32K",
+  //      "ROMEnabled": "true",
+  //      "ROM": "resources/hexdumpImages/ROM/system/NAS_DOS_14.nas",
+  //      "ROMAddress": "D000"
+  //    }
+  //  },
   {
-    "name": "Nascom RAM 'A'",
-    "clazz": "com.codingrodent.emulator.cards.nascommemory.Nascom32KRAMA",
+    "name": "64K Ram Card",
+    "clazz": "com.codingrodent.emulator.cards.ram.Gemini64KRAM",
     "order": "1",
     "properties": {
-      "StartAddress": "1000",
-      "Size": "32K",
-      "ROMEnabled": "true",
-      "ROM": "resources/hexdumpImages/ROM/system/NAS_DOS_14.nas",
-      "ROMAddress": "D000"
+      "BaseAddress": "0000",
+      "Size": "64K",
+      "Page": "0"
     }
   },
   {
     "name": "Nascom Floppy Controller",
     "clazz": "com.codingrodent.emulator.cards.fdc.NascomFloppyController",
     "properties": {
-      "ANADisk3": "resources/disk/anadisk/NASUTL51.DMP",
-      "Dump0": "resources/disk/dump/mc-games.dsk",
+      "ANADisk3": "resources/disk/anadisk/ROMS.DMP",
+      "Dump0": "resources/disk/dump/nasdos/mc-games.dsk",
       "Dump0_Tracks": "77",
       "Dump0_Sectors": "16",
       "Dump0_Sides": "2",
