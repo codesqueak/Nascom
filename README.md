@@ -23,7 +23,7 @@ At present the available version of the Jacoco plugin (2.0.1 at time of writing)
 3. run gradlew clean build / ./gradlew clean build
 5. run gradlew makedist / ./gradlew makedist
 6. Move to the /dest directory
-7. Configure ROMM's into EmulatorInfo.json
+7. Configure ROM's into EmulatorInfo.json
 8. run java -jar NascomEmulator-0.1.0.jar
 9. Enjoy that 4MHz goodness !
 
