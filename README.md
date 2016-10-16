@@ -95,6 +95,10 @@ The file is terminated with a single period '.'
 To run the emulator, the minimum software required is an operating system. When downloaded, the emulator.json file requires to be edited to point to it. 
 
 
+### Running on a Raspberry Pi (RPi)
+
+![RPi](https://github.com/codesqueak/Nascom/img/nascom_pi.png)
+
 
 ### Known problem areas:
 
