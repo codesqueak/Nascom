@@ -39,11 +39,6 @@ public abstract class FDC17xx extends BaseCard {
     //
     protected DiskImage selectedDisk;
 
-    //
-    public enum FDC_CHIP {
-        FDC_1771, FDC_1791, FDC_1793, FDC_1795, FDC_1797
-    }
-
     protected FDC17xx() {
     }
 
@@ -82,7 +77,7 @@ public abstract class FDC17xx extends BaseCard {
                         return 0x11;
                 }
         }
-        return 0xFF;
+        return 0x00;
     }
 
     /**
@@ -264,6 +259,11 @@ public abstract class FDC17xx extends BaseCard {
         } catch (Exception e) {
             throw new RuntimeException("Unable to load disk image. " + e.getMessage());
         }
+    }
+
+    //
+    public enum FDC_CHIP {
+        FDC_1771, FDC_1791, FDC_1793, FDC_1795, FDC_1797
     }
 
     /**

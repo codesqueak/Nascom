@@ -94,6 +94,16 @@ public class Nascom32KRAMA extends MemoryCard {
     }
 
     /**
+     * Get the details of the card by the author
+     *
+     * @return Card name string
+     */
+    @Override
+    public String getCardDetails() {
+        return "Nascom RAM 'A' Card - Version 1.0";
+    }
+
+    /**
      * Does the card support RAM at the address specified
      *
      * @param address The address to test
@@ -113,16 +123,6 @@ public class Nascom32KRAMA extends MemoryCard {
     @Override
     public boolean isROM(int address) {
         return romValid[address];
-    }
-
-    /**
-     * Get the details of the card by the author
-     *
-     * @return Card name string
-     */
-    @Override
-    public String getCardDetails() {
-        return "Nascom RAM 'A' Card - Version 1.0";
     }
 
     /**

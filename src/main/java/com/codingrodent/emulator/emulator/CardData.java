@@ -40,6 +40,9 @@ public class CardData {
     @Expose
     private Map<String, String> properties;
 
+    /**
+     * Slightly odd looking class - no setters - done via gson when importing Emulator.json
+     */
     public CardData() {
     }
 
@@ -55,7 +58,7 @@ public class CardData {
         return clazz;
     }
 
-    int getOrder() {
+    public int getOrder() {
         return order;
     }
 

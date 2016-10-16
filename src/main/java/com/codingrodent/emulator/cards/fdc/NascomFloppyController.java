@@ -121,6 +121,86 @@ public class NascomFloppyController extends FDC17xx {
     }
 
     /**
+     * Get the details of the card by the author
+     *
+     * @return Card name string
+     */
+    @Override
+    public String getCardDetails() {
+        return "Nascom Floppy Controller Card - Version 1.0";
+    }
+
+    /**
+     * Reset the card
+     */
+    @Override
+    public void reset() {
+        statusRegister = 0;
+        trackRegister = 0;
+        sectorRegister = 1;
+        dataRegister = 0;
+        driveRegister = 0;
+        intrqRegister = 0;
+        //
+        track = 0;
+        sector = 1;
+        side = 0;
+        command = IDLE;
+        //
+        stepIn = true;
+        //        runMotor = false;
+        //        highDensity = true;
+        //        multiple = false;
+        //
+        bufferPosition = -1;
+        readBuffer = new int[0];
+        selectedDisk = disk0;
+        //
+        idByteCounter = 0;
+    }
+
+    /**
+     * @param e ActionEvent
+     */
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // Disk Menu
+        String menuCommand = e.getActionCommand();
+        if ("Save Disk 0".equals(menuCommand)) {
+            saveDisk(0, FDC_1793);
+        } else {
+            if ("Save Disk 1".equals(menuCommand)) {
+                saveDisk(1, FDC_1793);
+            } else {
+                if ("Save Disk 2".equals(menuCommand)) {
+                    saveDisk(2, FDC_1793);
+                } else {
+                    if ("Save Disk 3".equals(menuCommand)) {
+                        saveDisk(3, FDC_1793);
+                    } else {
+                        if ("Load Disk 0".equals(menuCommand)) {
+                            loadDisk(0);
+                        } else {
+                            if ("Load Disk 1".equals(menuCommand)) {
+                                loadDisk(1);
+                            } else {
+                                if ("Load Disk 2".equals(menuCommand)) {
+                                    loadDisk(2);
+                                } else {
+                                    if ("Load Disk 3".equals(menuCommand)) {
+                                        loadDisk(3);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    /**
      * Does the card support input at the address specified
      *
      * @param address The address to test
@@ -179,42 +259,73 @@ public class NascomFloppyController extends FDC17xx {
     }
 
     /**
-     * Get the details of the card by the author
+     * Write to the disk controller card I/O ports
      *
-     * @return Card name string
+     * @param address Address being written to
+     * @param data    Data being written
      */
     @Override
-    public String getCardDetails() {
-        return "Nascom Floppy Controller Card - Version 1.0";
+    public void ioWrite(int address, int data) {
+        switch (address) {
+            case commandPort:
+                writeCommand(data);
+                break;
+
+            case trackPort:
+                writeTrack(data);
+                break;
+
+            case sectorPort:
+                writeSector(data);
+                break;
+
+            case dataPort:
+                writeData(data);
+                break;
+
+            case drivePort:
+                writeDrive(data);
+                break;
+            //
+            //            case XEBEC_CTRL:
+            //                xebecController.ioWrite(address, data);
+            //                break;
+            //
+            //            case XEBEC_DATA:
+            //                xebecController.ioWrite(address, data);
+            //                break;
+            default:
+        }
     }
 
     /**
-     * Reset the card
+     * Read from the disk controller card
+     *
+     * @param address Address to read from
+     * @return Value read from the port
      */
     @Override
-    public void reset() {
-        statusRegister = 0;
-        trackRegister = 0;
-        sectorRegister = 1;
-        dataRegister = 0;
-        driveRegister = 0;
-        intrqRegister = 0;
-        //
-        track = 0;
-        sector = 1;
-        side = 0;
-        command = IDLE;
-        //
-        stepIn = true;
-        //        runMotor = false;
-        //        highDensity = true;
-        //        multiple = false;
-        //
-        bufferPosition = -1;
-        readBuffer = new int[0];
-        selectedDisk = disk0;
-        //
-        idByteCounter = 0;
+    public int ioRead(int address) {
+        return ioRead2(address);
+    }
+
+    /**
+     * Recover the number of T states executed by the CPU
+     *
+     * @return long
+     */
+    @Override
+    public long getClock() {
+        return -1;
+    }
+
+    /**
+     * Set the number of T states executed by the CPU
+     *
+     * @param t long
+     */
+    @Override
+    public void setClock(long t) {
     }
 
     /**
@@ -267,47 +378,6 @@ public class NascomFloppyController extends FDC17xx {
     }
 
     /**
-     * @param e ActionEvent
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        // Disk Menu
-        String menuCommand = e.getActionCommand();
-        if ("Save Disk 0".equals(menuCommand)) {
-            saveDisk(0, FDC_1793);
-        } else {
-            if ("Save Disk 1".equals(menuCommand)) {
-                saveDisk(1, FDC_1793);
-            } else {
-                if ("Save Disk 2".equals(menuCommand)) {
-                    saveDisk(2, FDC_1793);
-                } else {
-                    if ("Save Disk 3".equals(menuCommand)) {
-                        saveDisk(3, FDC_1793);
-                    } else {
-                        if ("Load Disk 0".equals(menuCommand)) {
-                            loadDisk(0);
-                        } else {
-                            if ("Load Disk 1".equals(menuCommand)) {
-                                loadDisk(1);
-                            } else {
-                                if ("Load Disk 2".equals(menuCommand)) {
-                                    loadDisk(2);
-                                } else {
-                                    if ("Load Disk 3".equals(menuCommand)) {
-                                        loadDisk(3);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-    }
-
-    /**
      * Write a byte into ram
      *
      * @param address The address to be written to
@@ -343,57 +413,6 @@ public class NascomFloppyController extends FDC17xx {
     }
 
     /**
-     * Write to the disk controller card I/O ports
-     *
-     * @param address Address being written to
-     * @param data    Data being written
-     */
-    @Override
-    public void ioWrite(int address, int data) {
-        switch (address) {
-            case commandPort:
-                writeCommand(data);
-                break;
-
-            case trackPort:
-                writeTrack(data);
-                break;
-
-            case sectorPort:
-                writeSector(data);
-                break;
-
-            case dataPort:
-                writeData(data);
-                break;
-
-            case drivePort:
-                writeDrive(data);
-                break;
-            //
-            //            case XEBEC_CTRL:
-            //                xebecController.ioWrite(address, data);
-            //                break;
-            //
-            //            case XEBEC_DATA:
-            //                xebecController.ioWrite(address, data);
-            //                break;
-            default:
-        }
-    }
-
-    /**
-     * Read from the disk controller card
-     *
-     * @param address Address to read from
-     * @return Value read from the port
-     */
-    @Override
-    public int ioRead(int address) {
-        return ioRead2(address);
-    }
-
-    /**
      * Will a read to an address cause RAMDIS (i.e. ROM) to be asserted
      *
      * @param address The address to read from
@@ -413,25 +432,6 @@ public class NascomFloppyController extends FDC17xx {
     @Override
     public boolean assertRAMDIScapable(int address) {
         return false;
-    }
-
-    /**
-     * Recover the number of T states executed by the CPU
-     *
-     * @return long
-     */
-    @Override
-    public long getClock() {
-        return -1;
-    }
-
-    /**
-     * Set the number of T states executed by the CPU
-     *
-     * @param t long
-     */
-    @Override
-    public void setClock(long t) {
     }
 
     /**
