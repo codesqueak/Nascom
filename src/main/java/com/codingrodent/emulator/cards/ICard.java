@@ -45,13 +45,6 @@ public interface ICard extends ActionListener {
     void setCardProperties(Map<String, String> cardProperties);
 
     /**
-     * Identify the NAS BUS to the card
-     *
-     * @param nasBus The bus controller emulator
-     */
-    void setNasBus(INasBus nasBus);
-
-    /**
      * Does the card support RAM at the address specified
      *
      * @param address The address to test
@@ -115,5 +108,12 @@ public interface ICard extends ActionListener {
      * Reset the card
      */
     void reset();
+
+    /**
+     * Identify the NAS BUS to the card
+     *
+     * @param nasBus The NAS BUS controller object
+     */
+    void setNasBus(INasBus nasBus);
 
 }

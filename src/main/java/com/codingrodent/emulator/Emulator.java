@@ -1,3 +1,4 @@
+package com.codingrodent.emulator;
 /*
  * MIT License
  *
@@ -23,52 +24,15 @@
  *
  */
 
-package com.codingrodent.emulator.emulator;
+import com.codingrodent.emulator.emulator.NasBusEmulator;
 
-import com.google.gson.annotations.Expose;
-
-import java.util.Map;
-
-public class CardData {
-
-    @Expose
-    private String details;
-    @Expose
-    private String name;
-    @Expose
-    private String clazz;
-    @Expose
-    private int order;
-    @Expose
-    private Map<String, String> properties;
-
+public class Emulator {
     /**
-     * Slightly odd looking class - no setters - done via gson when importing Emulator.json
+     * Emulator entry point
+     *
+     * @param args Not used
      */
-    public CardData() {
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setDetails(final String details) {
-        this.details = details;
-    }
-
-    public String getClazz() {
-        return clazz;
-    }
-
-    public int getOrder() {
-        return order;
-    }
-
-    public Map<String, String> getProperties() {
-        return properties;
+    public static void main(String[] args) {
+        new NasBusEmulator();
     }
 }

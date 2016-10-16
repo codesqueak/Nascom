@@ -39,6 +39,7 @@ public abstract class BaseCard implements ICard, INasBus {
     //
     protected final SystemContext systemContext = SystemContext.createInstance();
     protected Map<String, String> cardProperties;
+    protected INasBus nasBus;
     //
     private String cardName;
 
@@ -50,56 +51,6 @@ public abstract class BaseCard implements ICard, INasBus {
     @Override
     public void setCardProperties(Map<String, String> cardProperties) {
         this.cardProperties = cardProperties;
-    }
-
-    /**
-     * Identify the NAS BUS to the card
-     *
-     * @param nasBus The NAS BUS controller object
-     */
-    @Override
-    public void setNasBus(INasBus nasBus) {
-    }
-
-    /**
-     * Get a human readable name for the card
-     *
-     * @return Card name string
-     */
-    @Override
-    public String getCardName() {
-        return cardName;
-    }
-
-    /**
-     * Set a human readable name for the card
-     *
-     * @param cardName Card name string
-     */
-    @Override
-    public void setCardName(String cardName) {
-        this.cardName = cardName;
-    }
-
-    /**
-     * Report if the card is a CPU card
-     *
-     * @return True if a cpu, else false
-     */
-    @Override
-    public boolean isCPU() {
-        return false;
-    }
-
-    /**
-     * Reset the card page mode setup
-     */
-    @Override
-    public void reset() {
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
     }
 
     /**
@@ -144,6 +95,57 @@ public abstract class BaseCard implements ICard, INasBus {
     @Override
     public boolean isOutputPort(int address) {
         return false;
+    }
+
+    /**
+     * Get a human readable name for the card
+     *
+     * @return Card name string
+     */
+    @Override
+    public String getCardName() {
+        return cardName;
+    }
+
+    /**
+     * Set a human readable name for the card
+     *
+     * @param cardName Card name string
+     */
+    @Override
+    public void setCardName(String cardName) {
+        this.cardName = cardName;
+    }
+
+    /**
+     * Report if the card is a CPU card
+     *
+     * @return True if a cpu, else false
+     */
+    @Override
+    public boolean isCPU() {
+        return false;
+    }
+
+    /**
+     * Reset the card page mode setup
+     */
+    @Override
+    public void reset() {
+    }
+
+    /**
+     * Identify the NAS BUS to the card
+     *
+     * @param nasBus The NAS BUS controller object
+     */
+    @Override
+    public void setNasBus(INasBus nasBus) {
+        this.nasBus = nasBus;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
     }
 
     /**

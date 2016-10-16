@@ -50,7 +50,6 @@ class GUIListener implements ActionListener, ItemListener {
      * @param e ActionEvent
      */
     @Override
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("DM_EXIT")
     public void actionPerformed(ActionEvent e) {
         String menuCommand = e.getActionCommand();
         PrimaryDisplay screenFrame = SystemContext.createInstance().getPrimaryDisplay();
@@ -74,10 +73,10 @@ class GUIListener implements ActionListener, ItemListener {
                 screenFrame.setSaveFile(true);
                 screenFrame.setLoadFileRAM(true);
                 //
-                screenFrame.set2MHz(true);
-                screenFrame.set4MHz(true);
-                screenFrame.set6MHz(true);
-                screenFrame.setMHzMax(true);
+                screenFrame.set2MHz();
+                screenFrame.set4MHz();
+                screenFrame.set6MHz();
+                screenFrame.setMHzMax();
                 //
                 screenFrame.setRunUntil(true);
                 screenFrame.setSingleStep(true);
@@ -99,19 +98,19 @@ class GUIListener implements ActionListener, ItemListener {
                 } else {
                     if ("2 MHz".equals(menuCommand)) {
                         context.getCPUCard().setSpeedMHz(2);
-                        screenFrame.set2MHz();
+                        screenFrame.enable2MHz();
                     } else {
                         if ("4 MHz".equals(menuCommand)) {
                             context.getCPUCard().setSpeedMHz(4);
-                            screenFrame.set4MHz();
+                            screenFrame.enable4MHz();
                         } else {
                             if ("6 MHz".equals(menuCommand)) {
                                 context.getCPUCard().setSpeedMHz(6);
-                                screenFrame.set6MHz();
+                                screenFrame.enable6MHz();
                             } else {
                                 if ("Maximum".equals(menuCommand)) {
                                     context.getCPUCard().setSpeedMHz(-1);
-                                    screenFrame.setMHzMax();
+                                    screenFrame.enableMHzMax();
                                 } else {
                                     if ("Reset".equals(menuCommand)) {
                                         context.getCardController().getCard(0).reset();

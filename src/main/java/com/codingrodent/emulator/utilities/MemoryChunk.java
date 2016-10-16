@@ -40,6 +40,19 @@ public class MemoryChunk {
     }
 
     /**
+     * A memory block filled from address zero
+     *
+     * @param memory The data to be written to the memory chunk
+     */
+    public MemoryChunk(short[] memory) {
+        this.memory = new short[65536];
+        start = 0;
+        size = memory.length;
+        address = memory.length;
+        System.arraycopy(memory, 0, this.memory, 0, memory.length);
+    }
+
+    /**
      * Get the block of memory represented by this object
      *
      * @return The memory block
@@ -96,6 +109,15 @@ public class MemoryChunk {
      */
     public short readByte(int fetchAddress) {
         return memory[fetchAddress];
+    }
+
+    /**
+     * Write a byte of data to a memory location.  The address is automatically incremented.
+     *
+     * @param data Data to write
+     */
+    public void setByte(int data) {
+        memory[address++] = (short) data;
     }
 
 }

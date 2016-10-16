@@ -23,15 +23,43 @@
  *
  */
 
-import com.codingrodent.emulator.emulator.NasBusEmulator;
+package com.codingrodent.emulator.utilities;
 
-public class Emulator {
-    /**
-     * Emulator entry point
-     *
-     * @param args Not used
-     */
-    public static void main(String[] args) {
-        new NasBusEmulator();
+import java.util.Arrays;
+
+class Sector implements IBTreeData {
+
+    private final int sector;
+    private byte[] data;
+
+    Sector(int sector) {
+        this.sector = sector;
     }
+
+    public byte[] getData() {
+        return Arrays.copyOf(data, data.length);
+    }
+
+    public void setData(byte[] data) {
+        this.data = Arrays.copyOf(data, data.length);
+    }
+
+    /**
+     * Transform the track / sector values into a unique b-tree locator
+     *
+     * @return b-tree value
+     */
+    @Override
+    public int getValue() {
+        return sector;
+    }
+
+    /**
+     * Destroy and data in the node
+     */
+    @Override
+    public void erase() {
+        data = null;
+    }
+
 }

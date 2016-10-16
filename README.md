@@ -18,10 +18,14 @@ At present the available version of the Jacoco plugin (2.0.1 at time of writing)
 
 ### Instructions
 
-1. Clone the project and load into your favourite IDE
+1. Clone the project fro github
 2. Find required ROM's (See configuration below)
-3. Execute the Emulator.class in NasBusEmulator
-4. Enjoy that 4MHz goodness !
+3. run gradlew clean build / ./gradlew clean build
+5. run gradlew makedist / ./gradlew makedist
+6. Move to the /dest directory
+7. Configure ROMM's into EmulatorInfo.json
+8. run java -jar NascomEmulator-0.1.0.jar
+9. Enjoy that 4MHz goodness !
 
 ###Configuration:
 

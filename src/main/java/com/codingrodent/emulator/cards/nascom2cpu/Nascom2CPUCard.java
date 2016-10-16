@@ -117,17 +117,6 @@ public class Nascom2CPUCard implements ICard, ICPUControl, INasBus {
     }
 
     /**
-     * Identify the NAS BUS to the card
-     *
-     * @param nasBus The NAS BUS controller object
-     */
-    @Override
-    public void setNasBus(INasBus nasBus) {
-        ((OnboardMemory) memory).setNasBus(nasBus);
-        ((OnboardIO) ioDevices).setNasBus(nasBus);
-    }
-
-    /**
      * Does the card support RAM at the address specified
      *
      * @param address The address to test
@@ -217,6 +206,17 @@ public class Nascom2CPUCard implements ICard, ICPUControl, INasBus {
     @Override
     public void reset() {
         processor.reset();
+    }
+
+    /**
+     * Identify the NAS BUS to the card
+     *
+     * @param nasBus The NAS BUS controller object
+     */
+    @Override
+    public void setNasBus(INasBus nasBus) {
+        ((OnboardMemory) memory).setNasBus(nasBus);
+        ((OnboardIO) ioDevices).setNasBus(nasBus);
     }
 
     /**
@@ -409,7 +409,7 @@ public class Nascom2CPUCard implements ICard, ICPUControl, INasBus {
      */
     @Override
     public boolean assertRAMDIS(int address) {
-        return ((OnboardMemory) memory).assertRAMDIS(address);
+        return false;
     }
 
     /**
@@ -421,7 +421,7 @@ public class Nascom2CPUCard implements ICard, ICPUControl, INasBus {
      */
     @Override
     public boolean assertRAMDIScapable(int address) {
-        return ((OnboardMemory) memory).assertRAMDIS(address);
+        return false;
     }
 
     /**
