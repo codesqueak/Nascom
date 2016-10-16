@@ -97,7 +97,7 @@ To run the emulator, the minimum software required is an operating system. When 
 
 ### Running on a Raspberry Pi (RPi)
 
-![RPi](https://github.com/codesqueak/Nascom/img/nascom_pi.png)
+![ScreenShot](img/nascom_pi.png)
 
 
 ### Known problem areas:
