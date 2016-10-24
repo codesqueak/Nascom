@@ -23,7 +23,7 @@
  *
  */
 
-package com.codingrodent.emulator.cards.nascommemory;
+package com.codingrodent.emulator.cards.ram;
 
 import com.codingrodent.emulator.cards.common.MemoryCard;
 import com.codingrodent.emulator.utilities.*;
@@ -80,7 +80,7 @@ public class Nascom32KRAMA extends MemoryCard {
                 systemContext.logInfoEvent("Loaded a file for EPROM, " + filename);
 
             } catch (IOException ex) {
-                String msg = "Unable to load the video ROM, <" + ex.getMessage() + ">";
+                String msg = "Unable to load the ROM, <" + ex.getMessage() + ">";
                 systemContext.logFatalEvent(msg);
                 throw new RuntimeException(msg);
             }
