@@ -71,11 +71,11 @@ public class Nascom32KRAMATest {
         assertFalse(ramA.assertRAMDIS(0xE000));
         //
         // RAMDIS Capable
-        assertFalse(ramA.assertRAMDIScapable(0x0000));
-        assertFalse(ramA.assertRAMDIScapable(0x1000));
-        assertFalse(ramA.assertRAMDIScapable(0xCFFF));
-        assertTrue(ramA.assertRAMDIScapable(0xD000));
-        assertFalse(ramA.assertRAMDIScapable(0xE000));
+        assertFalse(ramA.assertRAMDISCapable(0x0000));
+        assertFalse(ramA.assertRAMDISCapable(0x1000));
+        assertFalse(ramA.assertRAMDISCapable(0xCFFF));
+        assertTrue(ramA.assertRAMDISCapable(0xD000));
+        assertFalse(ramA.assertRAMDISCapable(0xE000));
     }
 
     @Test

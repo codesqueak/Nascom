@@ -98,7 +98,7 @@ public interface INasBus {
      * @param address The address to read from
      * @return true if RAMDIS is to be asserted, else false
      */
-    boolean assertRAMDIScapable(int address);
+    boolean assertRAMDISCapable(int address);
 
     /**
      * Recover the number of T states executed by the CPU
