@@ -34,8 +34,8 @@ import java.awt.image.MemoryImageSource;
 
 public class AVC extends BaseCard implements ActionListener {
 
-    private final static int SCALE_SMALL = 2;
-    private final static int SCALE_LARGE = 1;
+    private final static int SCALE_SMALL = 3;
+    private final static int SCALE_LARGE = 2;
     private final static int AVC_BLACK = 0xFF000000;
     private final static int AVC_RED = 0xFFFF0000;
     private final static int AVC_GREEN = 0xFF00FF00;
