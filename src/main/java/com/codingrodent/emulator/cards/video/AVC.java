@@ -34,25 +34,25 @@ import java.awt.image.MemoryImageSource;
 
 public class AVC extends BaseCard implements ActionListener {
 
-    private static final int SCALE_SMALL = 2;
-    private static final int SCALE_LARGE = 1;
+    private final static int SCALE_SMALL = 2;
+    private final static int SCALE_LARGE = 1;
     private final static int AVC_BLACK = 0xFF000000;
     private final static int AVC_RED = 0xFFFF0000;
     private final static int AVC_GREEN = 0xFF00FF00;
     private final static int AVC_BLUE = 0xFF0000FF;
-    private final static int avcRows = 256;
-    private final static int avcColumnsSmall = 384;
-    private final static int avcColumnsLarge = avcColumnsSmall * 2;
-    private final static int memoryOffset = 2;                                    // zero pixel is at 8002H
-    private final static int bytesPerLine = avcColumnsSmall / 8;
-    private final static int memorySize = 0x4000;
-    private final static int highResBit = 0x08;
+    private final static int AVC_ROWS = 256;
+    private final static int AVC_COLUMNS_SMALL = 384;
+    private final static int AVC_COLUMNS_LARGE = AVC_COLUMNS_SMALL * 2;
+    private final static int MEMORY_OFFSET = 2;                                    // zero pixel is at 8002H
+    private final static int bBYTES_PER_LINE = AVC_COLUMNS_SMALL / 8;
+    private final static int MEMORY_SIZE = 0x4000;
+    private final static int hHIGH_RES_BIT = 0x08;
     //
-    private final int[] red = new int[memorySize];
-    private final int[] green = new int[memorySize];
-    private final int[] blue = new int[memorySize];
-    private final int[] smallColourBuffer = new int[avcRows * avcColumnsSmall];
-    private final int[] largeColourBuffer = new int[avcRows * avcColumnsLarge];
+    private final int[] red = new int[MEMORY_SIZE];
+    private final int[] green = new int[MEMORY_SIZE];
+    private final int[] blue = new int[MEMORY_SIZE];
+    private final int[] smallColourBuffer = new int[AVC_ROWS * AVC_COLUMNS_SMALL];
+    private final int[] largeColourBuffer = new int[AVC_ROWS * AVC_COLUMNS_LARGE];
     private final int[] palette = new int[8];
     private final int[] CRTCRegisters = new int[255];                        // CRTC mirror registers
     //
@@ -78,12 +78,15 @@ public class AVC extends BaseCard implements ActionListener {
         reset();
     }
 
+    /**
+     * Reset the card to power on conditions
+     */
     @Override
     public void initialise() {
-        /* paint the AVC frame (small) */
         avcFrame = new AVCFrame("Nascom 2 AVC Model B");
         avcFrame.getContentPane().setBackground(Color.BLACK);
         //
+        // Block colour palatte settings
         palette[0] = AVC_BLACK;
         palette[1] = AVC_BLUE;
         palette[2] = AVC_GREEN;
@@ -91,36 +94,43 @@ public class AVC extends BaseCard implements ActionListener {
         palette[4] = AVC_RED;
         palette[5] = 0xFFFF00FF;
         palette[6] = 0xFFFFFF00;
-        palette[7] = 0xFFFFFFFF;
+        palette[7] = 0xFFFFFFFF; // white
         //
-        for (int row = 0; row < avcRows; row++) {
-            for (int column = 0; column < avcColumnsSmall; column++) {
-                smallColourBuffer[row * avcColumnsSmall + column] = 0xFF000000 | row * column; // row * column;
+        //  Fill small colour buffer with default pattern
+        for (int row = 0; row < AVC_ROWS; row++) {
+            for (int column = 0; column < AVC_COLUMNS_SMALL; column++) {
+                smallColourBuffer[row * AVC_COLUMNS_SMALL + column] = AVC_BLACK | row * column; // row * column;
             }
         }
-        //
-        for (int row = 0; row < avcRows; row++) {
-            for (int column = 0; column < avcColumnsLarge; column++) {
-                largeColourBuffer[row * avcColumnsLarge + column] = 0xFF000000 | row * column; // row * column;
+        //  Fill large colour buffer with default pattern
+        for (int row = 0; row < AVC_ROWS; row++) {
+            for (int column = 0; column < AVC_COLUMNS_LARGE; column++) {
+                largeColourBuffer[row * AVC_COLUMNS_LARGE + column] = AVC_BLACK | row * column; // row * column;
             }
         }
+        // Create images for display
+        smallImage = Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(AVC_COLUMNS_SMALL, AVC_ROWS, smallColourBuffer, 0, AVC_COLUMNS_SMALL));
+        largeImage = Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(AVC_COLUMNS_LARGE, AVC_ROWS, largeColourBuffer, 0, AVC_COLUMNS_LARGE));
         //
-        smallImage = Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(avcColumnsSmall, avcRows, smallColourBuffer, 0, avcColumnsSmall));
-        largeImage = Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(avcColumnsLarge, avcRows, largeColourBuffer, 0, avcColumnsLarge));
-        //
-        avcFrame.getContentPane().setPreferredSize(new Dimension(avcColumnsSmall * 2, avcRows * 2));
+        avcFrame.getContentPane().setPreferredSize(new Dimension(AVC_COLUMNS_SMALL * 2, AVC_ROWS * 2));
         smallImage.setAccelerationPriority(1.0f);
         //
         avcFrame.setResizable(false);
         avcFrame.pack();
         avcFrame.setVisible(true);
         //
+        // Set image redisplay timer
         Timer timer = new Timer(50, this);
         timer.setCoalesce(true);
         timer.setRepeats(true);
         timer.start();
     }
 
+    /**
+     * Get the details of the card by the author
+     *
+     * @return Card name string
+     */
     @Override
     public String getCardDetails() {
         return "Nascom AVC Model B - Version 3.0";
@@ -133,7 +143,7 @@ public class AVC extends BaseCard implements ActionListener {
      * @return True is RAM, else false
      */
     @Override
-    public boolean isRAM(int address) {
+    public boolean isRAM(final int address) {
         return (address >= 0x8000) && (address < 0xC000);
     }
 
@@ -144,7 +154,7 @@ public class AVC extends BaseCard implements ActionListener {
      * @return True is port, else false
      */
     @Override
-    public boolean isInputPort(int address) {
+    public boolean isInputPort(final int address) {
         switch (address) {
             case 0xB0:
                 return true;
@@ -163,7 +173,7 @@ public class AVC extends BaseCard implements ActionListener {
      * @return True is port, else false
      */
     @Override
-    public boolean isOutputPort(int address) {
+    public boolean isOutputPort(final int address) {
         return isInputPort(address);
     }
 
@@ -191,11 +201,10 @@ public class AVC extends BaseCard implements ActionListener {
             green[i] = 0;
             blue[i] = 0;
         }
-        // if (PropertyStatus.getInstance().getLogging())
-        // System.out.println("AVC Reset");
     }
 
-    /*
+    /**
+     * Repaint AVC image on demand - scheduled defined by timer
      * (non-Javadoc)
      *
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -203,20 +212,26 @@ public class AVC extends BaseCard implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (highResSelected) {
-            largeImage = Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(avcColumnsLarge, avcRows, largeColourBuffer, 0, avcColumnsLarge));
+            largeImage = Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(AVC_COLUMNS_LARGE, AVC_ROWS, largeColourBuffer, 0, AVC_COLUMNS_LARGE));
             largeImage.setAccelerationPriority(1.0f);
-            Image doubleImage = largeImage.getScaledInstance(avcColumnsLarge * SCALE_LARGE, avcRows * SCALE_LARGE, Image.SCALE_FAST);
+            Image doubleImage = largeImage.getScaledInstance(AVC_COLUMNS_LARGE * SCALE_LARGE, AVC_ROWS * SCALE_LARGE, Image.SCALE_FAST);
             avcFrame.getContentPane().getGraphics().drawImage(doubleImage, 0, 0, null);
         } else {
-            smallImage = Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(avcColumnsSmall, avcRows, smallColourBuffer, 0, avcColumnsSmall));
+            smallImage = Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(AVC_COLUMNS_SMALL, AVC_ROWS, smallColourBuffer, 0, AVC_COLUMNS_SMALL));
             smallImage.setAccelerationPriority(1.0f);
-            Image doubleImage = smallImage.getScaledInstance(avcColumnsSmall * SCALE_SMALL, avcRows * SCALE_SMALL, Image.SCALE_FAST);
+            Image doubleImage = smallImage.getScaledInstance(AVC_COLUMNS_SMALL * SCALE_SMALL, AVC_ROWS * SCALE_SMALL, Image.SCALE_FAST);
             avcFrame.getContentPane().getGraphics().drawImage(doubleImage, 0, 0, null);
         }
     }
 
+    /**
+     * Write data to CRTC controller
+     *
+     * @param address Address to write to
+     * @param data    Data to be written
+     */
     @Override
-    public void ioWrite(int address, int data) {
+    public void ioWrite(final int address, final int data) {
         switch (address) {
             case 0xB0: {
                 CRTCControlWrite(data);
@@ -235,9 +250,14 @@ public class AVC extends BaseCard implements ActionListener {
         }
     }
 
-    // read from a control port
+    /**
+     * Read data from the CRTC controller
+     *
+     * @param address Address to read from
+     * @return Byte of data
+     */
     @Override
-    public int ioRead(int address) {
+    public int ioRead(final int address) {
         switch (address) {
             case 0xB0: {
                 return CRTCControlRead();
@@ -253,7 +273,12 @@ public class AVC extends BaseCard implements ActionListener {
     }
 
     /**
+     * Write data to the AVC memory pages
      *
+     * @param address Address to write to
+     * @param data    Data to be written
+     * @param ramdis  RAMDIS signal to support ROM overlapping RAM
+     * @return True signals memory write abort
      */
     @Override
     public boolean memoryWrite(int address, final int data, final boolean ramdis) {
@@ -274,17 +299,16 @@ public class AVC extends BaseCard implements ActionListener {
                     updatePixelByteLowRes(address);
                 return true;
             }
-            return false;
         }
         return false;
     }
 
     /**
-     * Read data from the memory bus taking into account the RAMDIS signal
+     * Read data from the AVC mamory (If paged in)
      *
      * @param address The address to read from
      * @param ramdis  RAMDIS bus signal
-     * @return The byte read
+     * @return The byte read (If available)
      */
     @Override
     public int memoryRead(final int address, final boolean ramdis) {
@@ -295,6 +319,12 @@ public class AVC extends BaseCard implements ActionListener {
         }
     }
 
+    /**
+     * Read data from the AVC mamory (If paged in)
+     *
+     * @param address The address to read from
+     * @return The byte read
+     */
     @Override
     public final int memoryRead(int address) {
         if ((address < 0x8000) || (address >= 0xC000)) {
@@ -318,7 +348,7 @@ public class AVC extends BaseCard implements ActionListener {
      * @return true if RAMDIS is to be asserted, else false
      */
     @Override
-    public boolean assertRAMDIS(int address) {
+    public boolean assertRAMDIS(final int address) {
         return (address >= 0x8000) && (address < 0xC000) && pagedIn;
     }
 
@@ -329,16 +359,15 @@ public class AVC extends BaseCard implements ActionListener {
      * @return true if RAMDIS is to be asserted, else false
      */
     @Override
-    public boolean assertRAMDISCapable(int address) {
+    public boolean assertRAMDISCapable(final int address) {
         return (address >= 0x8000) && (address < 0xC000);
     }
 
     /**
-     *
-     *
+     * Repaint all pixels into the display image for display
      */
     private void resetMemoryDisplay() {
-        for (int address = 0; address < memorySize; address++) {
+        for (int address = 0; address < MEMORY_SIZE; address++) {
             if (highResSelected) {
                 updatePixelByteHighRes(address);
             } else {
@@ -348,7 +377,7 @@ public class AVC extends BaseCard implements ActionListener {
     }
 
     /**
-     * update a single byte in the colour planes
+     * update a single byte in the colour planes for low res display
      *
      * @param address The address the data was written to
      */
@@ -357,10 +386,10 @@ public class AVC extends BaseCard implements ActionListener {
         int column = address & 0x003F;
         int row = (address >> 6) & 0x00FF;
         // out of border check
-        if ((column < memoryOffset) || (column >= (bytesPerLine + memoryOffset))) {
+        if ((column < MEMORY_OFFSET) || (column >= (bBYTES_PER_LINE + MEMORY_OFFSET))) {
             return;
         }
-        column = column - memoryOffset; // starts at 8002H for some unknown reason....
+        column = column - MEMORY_OFFSET; // starts at 8002H for some unknown reason....
         column = column * 8; // convert byte to pixel
         //
         int redByte, greenByte, blueByte;
@@ -398,7 +427,7 @@ public class AVC extends BaseCard implements ActionListener {
     }
 
     /**
-     * update a single byte in the colour planes
+     * update a single byte in the colour planes for high res display
      *
      * @param address The address the data was written to
      */
@@ -407,10 +436,10 @@ public class AVC extends BaseCard implements ActionListener {
         int column = address & 0x003F;
         int row = (address >> 6) & 0x00FF;
         // out of border check
-        if ((column < memoryOffset) || (column >= (bytesPerLine + memoryOffset))) {
+        if ((column < MEMORY_OFFSET) || (column >= (bBYTES_PER_LINE + MEMORY_OFFSET))) {
             return;
         }
-        column = column - memoryOffset; // starts at 8002H for some unknown reason....
+        column = column - MEMORY_OFFSET; // starts at 8002H for some unknown reason....
         column = column * 8; // convert byte to pixel
         //
         int redByte, greenByte, blueByte;
@@ -470,17 +499,17 @@ public class AVC extends BaseCard implements ActionListener {
     }
 
     /* write to the control port */
-    private void CRTCControlWrite(int data) {
+    private void CRTCControlWrite(final int data) {
         CRTCRegister = data;
     }
 
     /* write to the data port */
-    private void CRTCDataWrite(int data) {
+    private void CRTCDataWrite(final int data) {
         CRTCRegisters[CRTCRegister] = data;
     }
 
     /* read from the page control port */
-    private void swapPagesWrite(int data) {
+    private void swapPagesWrite(final int data) {
         // System.out.println("Write to page control port B2:"+data);
         memorySelected = 0;
         displaySelected = 0;
@@ -577,17 +606,17 @@ public class AVC extends BaseCard implements ActionListener {
                 break;
             }
             default:
-                System.out.println("Bad AVC memory display value");
+                break;
         }
         // if the display has changed, reselect the image
         if ((data & 0x78) != (lastB2 & 0x78)) {
-            highResSelected = (data & highResBit) != 0;
+            highResSelected = (data & hHIGH_RES_BIT) != 0;
             if (highResSelected) {
-                avcFrame.getContentPane().setPreferredSize(new Dimension(avcColumnsLarge * SCALE_LARGE, avcRows * SCALE_LARGE));
-                avcFrame.getContentPane().setSize(new Dimension(avcColumnsLarge * SCALE_LARGE, avcRows * SCALE_LARGE));
+                avcFrame.getContentPane().setPreferredSize(new Dimension(AVC_COLUMNS_LARGE * SCALE_LARGE, AVC_ROWS * SCALE_LARGE));
+                avcFrame.getContentPane().setSize(new Dimension(AVC_COLUMNS_LARGE * SCALE_LARGE, AVC_ROWS * SCALE_LARGE));
             } else {
-                avcFrame.getContentPane().setPreferredSize(new Dimension(avcColumnsSmall * SCALE_SMALL, avcRows * SCALE_SMALL));
-                avcFrame.getContentPane().setSize(new Dimension(avcColumnsSmall * SCALE_SMALL, avcRows * SCALE_SMALL));
+                avcFrame.getContentPane().setPreferredSize(new Dimension(AVC_COLUMNS_SMALL * SCALE_SMALL, AVC_ROWS * SCALE_SMALL));
+                avcFrame.getContentPane().setSize(new Dimension(AVC_COLUMNS_SMALL * SCALE_SMALL, AVC_ROWS * SCALE_SMALL));
             }
             avcFrame.pack();
             resetMemoryDisplay();
@@ -621,7 +650,7 @@ public class AVC extends BaseCard implements ActionListener {
      * @param pixelValue Pixel value to set translated through a palette lookup
      */
     private void displaySmallAVCImageByte(final int row, final int column, final int pixelValue) {
-        smallColourBuffer[row * avcColumnsSmall + column] = palette[pixelValue];
+        smallColourBuffer[row * AVC_COLUMNS_SMALL + column] = palette[pixelValue];
         //
     }
 
@@ -635,7 +664,7 @@ public class AVC extends BaseCard implements ActionListener {
     private void displayLargeAVCImageByte(final int row, final int column, final int pixelValue) {
         // if (0 != pixelValue) System.out.println(row + "/" + column + "/" + pixelValue);
         try {
-            int position = row * avcColumnsLarge + column;
+            int position = row * AVC_COLUMNS_LARGE + column;
             largeColourBuffer[position] = largeColourBuffer[position] & AVC_BLUE;
             largeColourBuffer[position] = largeColourBuffer[position] | palette[pixelValue];
         } catch (Exception e) {
@@ -653,7 +682,7 @@ public class AVC extends BaseCard implements ActionListener {
     private void displayLargeAVCImageByteAddBlue(final int row, final int column, final int pixelValue) {
         // System.out.println(row+"/"+column);
         try {
-            int position = row * avcColumnsLarge + column;
+            int position = row * AVC_COLUMNS_LARGE + column;
             largeColourBuffer[position] = largeColourBuffer[position] & 0xFFFFFF00;
             largeColourBuffer[position] = largeColourBuffer[position] | palette[pixelValue];
             //
