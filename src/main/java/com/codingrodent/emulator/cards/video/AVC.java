@@ -64,7 +64,6 @@ public class AVC extends BaseCard implements ActionListener {
     private boolean blueDisplay = false;
     private boolean pagedIn = false;
     private int memorySelected = 0;
-    private int displaySelected = 0;
     private boolean highResSelected = false;
     private int lastB2 = 0x80;
     private Image smallImage, largeImage;
@@ -185,7 +184,6 @@ public class AVC extends BaseCard implements ActionListener {
         greenDisplay = false;
         blueDisplay = false;
         memorySelected = 0;
-        displaySelected = 0;
         pagedIn = false;
         // clear the colour memory planes
         for (int i = 0; i < red.length; i++) {
@@ -503,7 +501,6 @@ public class AVC extends BaseCard implements ActionListener {
     /* write to the page control port */
     private void swapPagesWrite(final int data) {
         memorySelected = 0;
-        displaySelected = 0;
         pagedIn = false;
         //
         redSelected = (data & 0x01) != 0;
@@ -539,33 +536,6 @@ public class AVC extends BaseCard implements ActionListener {
             case 7: {
                 memorySelected = 3;
                 pagedIn = true;
-                break;
-            }
-            default:
-                break;
-        }
-        //
-        temp = (data >> 4) & 0x07;
-        // number of memory planes displayed
-        switch (temp) {
-            case 0: {
-                displaySelected = 0;
-                break;
-            }
-            case 1:
-            case 2:
-            case 4: {
-                displaySelected = 1;
-                break;
-            }
-            case 3:
-            case 5:
-            case 6: {
-                displaySelected = 2;
-                break;
-            }
-            case 7: {
-                displaySelected = 3;
                 break;
             }
             default:
