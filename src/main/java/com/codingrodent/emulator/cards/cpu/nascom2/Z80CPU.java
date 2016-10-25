@@ -23,7 +23,7 @@
  *
  */
 
-package com.codingrodent.emulator.cards.nascom2cpu;
+package com.codingrodent.emulator.cards.cpu.nascom2;
 
 import com.codingrodent.microprocessor.*;
 import com.codingrodent.microprocessor.Z80.Z80Core;

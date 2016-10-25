@@ -1,7 +1,7 @@
 [
   {
     "name": "Nascom 2",
-    "clazz": "com.codingrodent.emulator.cards.nascom2cpu.Nascom2CPUCard",
+    "clazz": "com.codingrodent.emulator.cards.cpu.nascom2.Nascom2CPUCard",
     "order": "0",
     "properties": {
       "VideoROM": "resources/hexdumpImages/ROM/system/CharacterGraphicsROM.nas",
