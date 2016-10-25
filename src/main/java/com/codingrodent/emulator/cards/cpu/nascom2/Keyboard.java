@@ -23,13 +23,23 @@
  *
  */
 
-package com.codingrodent.emulator.cards.nascom2cpu;
+package com.codingrodent.emulator.cards.cpu.nascom2;
 
 import com.codingrodent.microprocessor.IBaseDevice;
 
-class DefaultPIO implements IBaseDevice {
+class Keyboard implements IBaseDevice {
 
-    DefaultPIO() {
+    private final static int resetMask = 0x0002;
+    private final static int incMask = 0x0001;
+    private final int[] buffer = {0x00ff, 0x00ff, 0x00ff, 0x00ff, 0x00ff, 0x00ff, 0x00ff, 0x00ff};
+    private final int[] portBuffer = {0x00ff, 0x00ff, 0x00ff, 0x00ff, 0x00ff, 0x00ff, 0x00ff, 0x00ff};
+    private int position;
+
+    /*
+     * The Nascom keyboar is painful.  A keystrokek is a set of byte query / returns to
+     * map a row and column
+     */
+    Keyboard() {
     }
 
     /**
@@ -40,7 +50,9 @@ class DefaultPIO implements IBaseDevice {
      */
     @Override
     public int IORead(int address) {
-        //System.out.println("Port "+address+" read");
+        if (address == 0) {
+            return portBuffer[position];
+        }
         return 0;
     }
 
@@ -52,7 +64,36 @@ class DefaultPIO implements IBaseDevice {
      */
     @Override
     public void IOWrite(int address, int data) {
-        //System.out.println("Port "+address+" write "+data);
+        if (address == 0) {
+            if ((resetMask & data) == resetMask) {
+                resetBuffer();
+            } else {
+                if ((incMask & data) == incMask) {
+                    position = (position + 1) % buffer.length;
+                }
+            }
+        }
+    }
+
+    /**
+     * Reset keyboard byte buffer
+     */
+    private void resetBuffer() {
+        synchronized (buffer) {
+            System.arraycopy(buffer, 0, portBuffer, 0, buffer.length);
+        }
+        position = 0;
+    }
+
+    /**
+     * translate a keystroke into a table for the keyboard port to place bytes into local buffer
+     *
+     * @param keyData Key stroke data
+     */
+    void setKeyStroke(int[] keyData) {
+        synchronized (buffer) {
+            System.arraycopy(keyData, 0, buffer, 0, buffer.length);
+        }
     }
 
 }

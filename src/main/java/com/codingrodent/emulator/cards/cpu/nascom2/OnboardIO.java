@@ -23,7 +23,7 @@
  *
  */
 
-package com.codingrodent.emulator.cards.nascom2cpu;
+package com.codingrodent.emulator.cards.cpu.nascom2;
 
 import com.codingrodent.emulator.emulator.SystemContext;
 import com.codingrodent.emulator.nas80Bus.INasBus;

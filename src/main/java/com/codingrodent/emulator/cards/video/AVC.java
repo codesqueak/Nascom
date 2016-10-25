@@ -44,7 +44,7 @@ public class AVC extends BaseCard implements ActionListener {
     private final static int AVC_COLUMNS_SMALL = 384;
     private final static int AVC_COLUMNS_LARGE = AVC_COLUMNS_SMALL * 2;
     private final static int MEMORY_OFFSET = 2;                                    // zero pixel is at 8002H
-    private final static int bBYTES_PER_LINE = AVC_COLUMNS_SMALL / 8;
+    private final static int BYTES_PER_LINE = AVC_COLUMNS_SMALL / 8;
     private final static int MEMORY_SIZE = 0x4000;
     private final static int hHIGH_RES_BIT = 0x08;
     //
@@ -112,7 +112,7 @@ public class AVC extends BaseCard implements ActionListener {
         smallImage = Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(AVC_COLUMNS_SMALL, AVC_ROWS, smallColourBuffer, 0, AVC_COLUMNS_SMALL));
         largeImage = Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(AVC_COLUMNS_LARGE, AVC_ROWS, largeColourBuffer, 0, AVC_COLUMNS_LARGE));
         //
-        avcFrame.getContentPane().setPreferredSize(new Dimension(AVC_COLUMNS_SMALL * 2, AVC_ROWS * 2));
+        avcFrame.getContentPane().setPreferredSize(new Dimension(AVC_COLUMNS_SMALL * SCALE_SMALL, AVC_ROWS * SCALE_SMALL));
         smallImage.setAccelerationPriority(1.0f);
         //
         avcFrame.setResizable(false);
@@ -155,15 +155,7 @@ public class AVC extends BaseCard implements ActionListener {
      */
     @Override
     public boolean isInputPort(final int address) {
-        switch (address) {
-            case 0xB0:
-                return true;
-            case 0xB1:
-                return true;
-            case 0xB2:
-                return true;
-        }
-        return false;
+        return (address == 0xB0) || (address == 0xB1) || (address == 0xB2);
     }
 
     /**
@@ -268,8 +260,9 @@ public class AVC extends BaseCard implements ActionListener {
             case 0xB2: {
                 return swapPagesRead();
             }
+            default:
+                return 0;
         }
-        return 0;
     }
 
     /**
@@ -282,7 +275,7 @@ public class AVC extends BaseCard implements ActionListener {
      */
     @Override
     public boolean memoryWrite(int address, final int data, final boolean ramdis) {
-        if ((address >= 0x8000) && (address < 0xC000)) {
+        if (isRAM(address)) {
             if (pagedIn) {
                 // write the data to selected memory pages
                 address = address & 0x3FFF; // map address to zero base
@@ -312,7 +305,7 @@ public class AVC extends BaseCard implements ActionListener {
      */
     @Override
     public int memoryRead(final int address, final boolean ramdis) {
-        if ((address >= 0x8000) && (address < 0xC000)) {
+        if (isRAM(address)) {
             return memoryRead(address);
         } else {
             return NO_MEMORY_PRESENT;
@@ -327,18 +320,18 @@ public class AVC extends BaseCard implements ActionListener {
      */
     @Override
     public final int memoryRead(int address) {
-        if ((address < 0x8000) || (address >= 0xC000)) {
+        if (isRAM(address)) {
+            address = address & 0x3FFF;
+            if (memorySelected != 1) {
+                return NO_MEMORY_PRESENT;
+            } else if (redSelected)
+                return red[address];
+            else if (greenSelected)
+                return green[address];
+            else
+                return blue[address];
+        } else
             return NO_MEMORY_PRESENT;
-        }
-        address = address & 0x3FFF;
-        if (memorySelected != 1) {
-            return NO_MEMORY_PRESENT;
-        } else if (redSelected)
-            return red[address];
-        else if (greenSelected)
-            return green[address];
-        else
-            return blue[address];
     }
 
     /**
@@ -360,7 +353,7 @@ public class AVC extends BaseCard implements ActionListener {
      */
     @Override
     public boolean assertRAMDISCapable(final int address) {
-        return (address >= 0x8000) && (address < 0xC000);
+        return isRAM(address);
     }
 
     /**
@@ -386,7 +379,7 @@ public class AVC extends BaseCard implements ActionListener {
         int column = address & 0x003F;
         int row = (address >> 6) & 0x00FF;
         // out of border check
-        if ((column < MEMORY_OFFSET) || (column >= (bBYTES_PER_LINE + MEMORY_OFFSET))) {
+        if ((column < MEMORY_OFFSET) || (column >= (BYTES_PER_LINE + MEMORY_OFFSET))) {
             return;
         }
         column = column - MEMORY_OFFSET; // starts at 8002H for some unknown reason....
@@ -436,7 +429,7 @@ public class AVC extends BaseCard implements ActionListener {
         int column = address & 0x003F;
         int row = (address >> 6) & 0x00FF;
         // out of border check
-        if ((column < MEMORY_OFFSET) || (column >= (bBYTES_PER_LINE + MEMORY_OFFSET))) {
+        if ((column < MEMORY_OFFSET) || (column >= (BYTES_PER_LINE + MEMORY_OFFSET))) {
             return;
         }
         column = column - MEMORY_OFFSET; // starts at 8002H for some unknown reason....
@@ -474,7 +467,6 @@ public class AVC extends BaseCard implements ActionListener {
             displayLargeAVCImageByte(row, pixelColumn + 8, redPixelValue);
             displayLargeAVCImageByte(row, pixelColumn, greenPixelValue);
             if (0 != (bitPosition & blueByte)) {
-                // System.out.println(row + " : " + column);
                 displayLargeAVCImageByteAddBlue(row, pixelColumn + i, 1);
             } else {
                 displayLargeAVCImageByteAddBlue(row, pixelColumn + i, 0);
@@ -508,9 +500,8 @@ public class AVC extends BaseCard implements ActionListener {
         CRTCRegisters[CRTCRegister] = data;
     }
 
-    /* read from the page control port */
+    /* write to the page control port */
     private void swapPagesWrite(final int data) {
-        // System.out.println("Write to page control port B2:"+data);
         memorySelected = 0;
         displaySelected = 0;
         pagedIn = false;
@@ -531,31 +522,15 @@ public class AVC extends BaseCard implements ActionListener {
                 pagedIn = false;
                 break;
             }
-            case 1: {
-                memorySelected = 1;
-                pagedIn = true;
-                break;
-            }
-            case 2: {
-                memorySelected = 1;
-                pagedIn = true;
-                break;
-            }
+            case 1:
+            case 2:
             case 4: {
                 memorySelected = 1;
                 pagedIn = true;
                 break;
             }
-            case 3: {
-                memorySelected = 2;
-                pagedIn = true;
-                break;
-            }
-            case 5: {
-                memorySelected = 2;
-                pagedIn = true;
-                break;
-            }
+            case 3:
+            case 5:
             case 6: {
                 memorySelected = 2;
                 pagedIn = true;
@@ -577,26 +552,14 @@ public class AVC extends BaseCard implements ActionListener {
                 displaySelected = 0;
                 break;
             }
-            case 1: {
-                displaySelected = 1;
-                break;
-            }
-            case 2: {
-                displaySelected = 1;
-                break;
-            }
+            case 1:
+            case 2:
             case 4: {
                 displaySelected = 1;
                 break;
             }
-            case 3: {
-                displaySelected = 2;
-                break;
-            }
-            case 5: {
-                displaySelected = 2;
-                break;
-            }
+            case 3:
+            case 5:
             case 6: {
                 displaySelected = 2;
                 break;
@@ -625,24 +588,6 @@ public class AVC extends BaseCard implements ActionListener {
     }
 
     /**
-     * is AVC memory selected for read ?
-     *
-     * @return True if AVC selected, else false
-     */
-    public boolean AVCMemorySelected() {
-        return pagedIn;
-    }
-
-    /**
-     * is AVC memory selected for write ?
-     *
-     * @return True if AVC display selected, else false
-     */
-    public boolean AVCDisplaySelected() {
-        return !(displaySelected == 0);
-    }
-
-    /**
      * update the complete 384 * 256 image
      *
      * @param row        Row to set
@@ -651,7 +596,6 @@ public class AVC extends BaseCard implements ActionListener {
      */
     private void displaySmallAVCImageByte(final int row, final int column, final int pixelValue) {
         smallColourBuffer[row * AVC_COLUMNS_SMALL + column] = palette[pixelValue];
-        //
     }
 
     /**
@@ -662,7 +606,6 @@ public class AVC extends BaseCard implements ActionListener {
      * @param pixelValue Pixel value to set translated through a palette lookup
      */
     private void displayLargeAVCImageByte(final int row, final int column, final int pixelValue) {
-        // if (0 != pixelValue) System.out.println(row + "/" + column + "/" + pixelValue);
         try {
             int position = row * AVC_COLUMNS_LARGE + column;
             largeColourBuffer[position] = largeColourBuffer[position] & AVC_BLUE;
@@ -680,7 +623,6 @@ public class AVC extends BaseCard implements ActionListener {
      * @param pixelValue Pixel value to set translated through a palette lookup
      */
     private void displayLargeAVCImageByteAddBlue(final int row, final int column, final int pixelValue) {
-        // System.out.println(row+"/"+column);
         try {
             int position = row * AVC_COLUMNS_LARGE + column;
             largeColourBuffer[position] = largeColourBuffer[position] & 0xFFFFFF00;
