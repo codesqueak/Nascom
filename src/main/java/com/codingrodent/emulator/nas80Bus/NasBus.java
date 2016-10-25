@@ -93,7 +93,7 @@ class NasBus implements INasBus {
                     memory[i] = 'R';
                     memoryPresent = true;
                 }
-                if (cardBus.assertRAMDIScapable(i * segmentSize)) {
+                if (cardBus.assertRAMDISCapable(i * segmentSize)) {
                     ramdis.append('*');
                     ramDisPresent = true;
                 } else {
@@ -279,7 +279,7 @@ class NasBus implements INasBus {
      * @return true if RAMDIS is to be asserted, else false
      */
     @Override
-    public boolean assertRAMDIScapable(int address) {
+    public boolean assertRAMDISCapable(int address) {
         return false;
     }
 

@@ -420,7 +420,7 @@ public class Nascom2CPUCard implements ICard, ICPUControl, INasBus {
      * @return true if RAMDIS is to be asserted, else false
      */
     @Override
-    public boolean assertRAMDIScapable(int address) {
+    public boolean assertRAMDISCapable(int address) {
         return false;
     }
 

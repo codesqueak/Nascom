@@ -430,7 +430,7 @@ public class NascomFloppyController extends FDC17xx {
      * @return true if RAMDIS is to be asserted, else false
      */
     @Override
-    public boolean assertRAMDIScapable(int address) {
+    public boolean assertRAMDISCapable(int address) {
         return false;
     }
 

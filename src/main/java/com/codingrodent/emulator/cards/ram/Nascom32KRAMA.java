@@ -191,7 +191,7 @@ public class Nascom32KRAMA extends MemoryCard {
      * @return true if RAMDIS is to be asserted, else false
      */
     @Override
-    public boolean assertRAMDIScapable(int address) {
+    public boolean assertRAMDISCapable(int address) {
         return romValid[address];
     }
 

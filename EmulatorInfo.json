@@ -42,13 +42,22 @@
   {
     "name": "Nascom Floppy Controller",
     "clazz": "com.codingrodent.emulator.cards.fdc.NascomFloppyController",
+    "order": "2",
     "properties": {
-      "ANADisk3": "resources/disk/anadisk/ROMS.DMP",
-      "Dump0": "resources/disk/dump/nasdos/mc-games.dsk",
+      "ANADisk3": "resources/disk/anadisk/NASUTL51.DMP",
+      "Dump0": "resources/disk/dump/nasdos/avc-demo.dsk",
       "Dump0_Tracks": "77",
       "Dump0_Sectors": "16",
       "Dump0_Sides": "2",
       "Dump0_Size": "256"
+    }
+  },
+  {
+    "name": "Nascom AVC Model B",
+    "clazz": "com.codingrodent.emulator.cards.video.AVC",
+    "order": "3",
+    "properties": {
+      "BaseAddress": "8000"
     }
   }
 ]

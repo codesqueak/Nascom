@@ -22,36 +22,18 @@
  * SOFTWARE.
  *
  */
-package com.codingrodent.emulator.cards.common;
 
-/**
- *
- */
-public abstract class MemoryCard extends BaseCard {
+package com.codingrodent.emulator.cards.video;
 
-    protected final static int MEMORY_SIZE = 64 * 1024;
+import javax.swing.*;
 
-    /**
-     * Will a read to an address cause RAMDIS (i.e. ROM) to be asserted
-     *
-     * @param address The address to read from
-     * @return true if RAMDIS is to be asserted, else false
-     */
-    @Override
-    public boolean assertRAMDIS(int address) {
-        return false;
-    }
+class AVCFrame extends JFrame {
 
-    /**
-     * Will a read to an address may cause RAMDIS (i.e. ROM) to be asserted.
-     * For example, a paged out ROM will cause RAMDIS to be asserted. That is, RAMDIS may occur at this address.
-     *
-     * @param address The address to read from
-     * @return true if RAMDIS is to be asserted, else false
-     */
-    @Override
-    public boolean assertRAMDISCapable(int address) {
-        return false;
+    private static final long serialVersionUID = 3257005466734178354L;
+
+    AVCFrame(String title) {
+        setTitle(title);
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     }
 
 }
