@@ -1,3 +1,5 @@
+[![License: MIT](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
+
 # Nascom 2 Emulator / 80-BUS Emulator
 
 Alpha Release - This is very much a work in progress - be warned!
