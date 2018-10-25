@@ -37,6 +37,7 @@ class CassetteTape {
     private FileInputStream tapeFileInput;
     private FileOutputStream tapeFileOutput;
     private String readFileName;
+    private int readAheadChar;
 
     CassetteTape() {
         systemContext = SystemContext.createInstance();
@@ -60,15 +61,13 @@ class CassetteTape {
      * @param data UART data
      */
     void writeDataToUART(int data) {
-        if (tapeLED) {
-            try {
-                if (null != tapeFileOutput) {
-                    tapeFileOutput.write(data);
-                }
-            } catch (Exception e) {
-                systemContext.logErrorEvent("Problem encountered writing to tape file. " + e.getMessage());
-            }
-        }
+	try {
+	    if (null != tapeFileOutput) {
+		tapeFileOutput.write(data);
+	    }
+	} catch (Exception e) {
+	    systemContext.logErrorEvent("Problem encountered writing to tape file. " + e.getMessage());
+	}
     }
 
     /**
@@ -77,22 +76,29 @@ class CassetteTape {
      * @return data UART Data
      */
     int readDataFromUART() {
-        if (tapeLED) {
-            try {
-                int oneChar = 0x00;
-                if (0 != tapeFileInput.available()) {
-                    return tapeFileInput.read();
-                } else {
-                    tapeFileInput.close();
-                    tapeFileInput = new FileInputStream(readFileName);
-                    return oneChar;
-                }
-            } catch (Exception e) {
-                return 0x00;
-            }
-        } else {
-            return 0x00;
-        }
+	int oneChar = readAheadChar;
+	fillReadAhead ();    
+	return oneChar;
+    }
+
+    /**
+     * Store a char from input in readAheadChar; close input stream if we reach the end.
+     */
+    void fillReadAhead () {
+	try {
+	    if (tapeFileInput == null) return;
+	    readAheadChar = tapeFileInput.read ();
+	    if (readAheadChar < 0) { // EOF reached
+		tapeFileInput.close ();
+		tapeFileInput = null;
+	    }
+	} catch (IOException e) {
+	    systemContext.logErrorEvent ("Problem encountered reading tape file " + e.getMessage ());
+	    try {
+		tapeFileInput.close();
+	    } catch (IOException ignored) { }
+	    tapeFileInput = null;
+	}
     }
 
     /**
@@ -102,7 +108,7 @@ class CassetteTape {
      */
     int readStatusFromUART() {
         int status = 0x00;
-        if (tapeLED && (null != tapeFileInput)) {
+        if (null != tapeFileInput ) {
             status = status | 0xC0;
         }
         if (tapeLED) {
