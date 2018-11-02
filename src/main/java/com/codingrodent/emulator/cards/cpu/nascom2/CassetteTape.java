@@ -104,15 +104,12 @@ class CassetteTape {
     /**
      * Read status from the UART status register, port 2
      *
-     * @return Valid data flag if read LED on and an input file exists
+     * @return Data received flag if an input file exists; transmit buffer should always be empty
      */
     int readStatusFromUART() {
-        int status = 0x00;
+        int status = 0x40;
         if (null != tapeFileInput ) {
-            status = status | 0xC0;
-        }
-        if (tapeLED) {
-            status = status | 0x40;
+            status = status | 0x80;
         }
         return status;
     }
@@ -176,7 +173,21 @@ class CassetteTape {
             setTapeRead(fileName);
         }
     }
-
+    /**
+     * Close input tape
+     */
+    void closeInput () {
+	if (tapeFileInput != null) {
+	    tapeFileInput.close ();
+	    tapeFileInput = null;
+	}
+    }
+    /**
+     * Return true if an input tape is open currently
+     */
+    boolean isInputOpen () {
+	return tapeFileInput != null;
+    }
     /**
      * Set a new tape image to write to
      */
@@ -190,6 +201,21 @@ class CassetteTape {
             systemContext.logDebugEvent("Saving tape file to " + fileName);
             setTapeWrite(fileName);
         }
+    }
+    /**
+     * Close output tape
+     */
+    void closeOutput () {
+	if (tapeFileOutput != null) {
+	    tapeFileOutput.close ();
+	    tapeFileOutput = null;
+	}
+    }
+    /**
+     * Return true if an output tape is open currently
+     */
+    boolean isOutputOpen () {
+	return tapeFileOutput != null;
     }
 
     /**
