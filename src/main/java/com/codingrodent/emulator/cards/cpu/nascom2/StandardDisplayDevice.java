@@ -44,13 +44,14 @@ class StandardDisplayDevice implements ActionListener {
     private final static int rows = 16;                                // screen rows
     private final static int columns = 48;                                // screen columns
     private final static int characters = 256;                                // character cells
-    private final static int scale = 3;                                    // scale up character to make
+    private final static int scale = 2;                                    // scale up character to make
     private final static int leftMargin = 0x000A;                            // non displayed cells on the
     private final static int rightMargin = 0x0007;                            // non displayed cells on the
     private final static int lineLength = 0x0040;                            // 64 bytes per line
     private final static int rightBorder = lineLength - rightMargin;
     private final Image[] icons = new Image[characters];        // pre-rendered each character
     private final JFrame screenFrame;                                        // standard video
+    private final JComponent canvas;
     private final int[] shadowRAM = new int[1024];
     private final short[] rom;
     private final VolatileImage imageBufferVolatile;
@@ -66,16 +67,19 @@ class StandardDisplayDevice implements ActionListener {
         /* the nascom 48*16 video display */
         screenFrame = SystemContext.createInstance().getPrimaryDisplay();
         //
-        screenFrame.getContentPane().setPreferredSize(new Dimension(columns * rowBits * scale, rows * columnBits * scale));
-        screenFrame.addWindowListener(new WindowHandler());
+	canvas = new JPanel ();
+        screenFrame.getContentPane().add (BorderLayout.CENTER, canvas);
+	canvas.setPreferredSize(new Dimension(columns * rowBits * scale, rows * columnBits * scale));
+	canvas.setMinimumSize(new Dimension(columns * rowBits, rows * columnBits));
+        //screenFrame.addWindowListener(new WindowHandler());
         // Set up the panel, enable this close and enable event handling
         // screenFrame.enableEvents(AWTEvent.WINDOW_EVENT_MASK | AWTEvent.KEY_EVENT_MASK | AWTEvent.ACTION_EVENT_MASK);
         // and show the window
         screenFrame.pack();
-        screenFrame.setResizable(false);
+        //screenFrame.setResizable(true);
         screenFrame.setVisible(true);
         //
-        imageBufferVolatile = screenFrame.getContentPane().createVolatileImage(columns * rowBits * scale, rows * columnBits * scale);
+        imageBufferVolatile = canvas.createVolatileImage(columns * rowBits * scale, rows * columnBits * scale);
         imageBufferGVolatile = imageBufferVolatile.createGraphics();
         //
         reset();
@@ -112,7 +116,7 @@ class StandardDisplayDevice implements ActionListener {
                 bitMask = bitMask >>> 1;
             }
         }
-        Image baseImage = screenFrame.createImage(new MemoryImageSource(rowBits, columnBits, pic, 0, rowBits));
+        Image baseImage = canvas.createImage(new MemoryImageSource(rowBits, columnBits, pic, 0, rowBits));
         baseImage = baseImage.getScaledInstance(rowBits * scale, columnBits * scale, Image.SCALE_DEFAULT);
         return baseImage;
     }
@@ -177,6 +181,14 @@ class StandardDisplayDevice implements ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        screenFrame.getContentPane().getGraphics().drawImage(imageBufferVolatile, 0, 0, null);
+	Dimension displaySize = canvas.getSize();
+	float scale = Math.min(displaySize.width / (float)(48*8), displaySize.height / (float)(16*16));
+	scale = Math.min (Math.max (1, scale), this.scale);
+	displaySize.width = (int)(48*8*scale+0.5);
+	displaySize.height = (int)(16*16*scale + 0.5);
+	canvas.getGraphics().drawImage(imageBufferVolatile,
+				       0, 0, displaySize.width, displaySize.height, // dst
+				       0, 0, 48*8*this.scale, 16*16*this.scale,     // src
+				       null);
     }
 }
