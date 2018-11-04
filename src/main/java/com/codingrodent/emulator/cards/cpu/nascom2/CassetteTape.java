@@ -178,7 +178,9 @@ class CassetteTape {
      */
     void closeInput () {
 	if (tapeFileInput != null) {
-	    tapeFileInput.close ();
+	    try {
+		tapeFileInput.close ();
+	    } catch (IOException ignored) { }
 	    tapeFileInput = null;
 	}
     }
@@ -207,7 +209,9 @@ class CassetteTape {
      */
     void closeOutput () {
 	if (tapeFileOutput != null) {
-	    tapeFileOutput.close ();
+	    try {
+		tapeFileOutput.close ();
+	    } catch (IOException ignored) { }
 	    tapeFileOutput = null;
 	}
     }
