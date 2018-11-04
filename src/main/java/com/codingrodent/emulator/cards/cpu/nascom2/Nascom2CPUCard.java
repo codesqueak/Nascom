@@ -40,6 +40,8 @@ public class Nascom2CPUCard implements ICard, ICPUControl, INasBus {
     private final static String TAPE = "Tape";
     private final static String LOAD_TAPE = "Load Tape";
     private final static String SAVE_TAPE = "Save Tape";
+    private final static String STOP_LOADING  = "Stop Loading Tape";
+    private final static String STOP_SAVING = "Stop Saving Tape";
     private final IMemory memory;
     private final IBaseDevice ioDevices;
     private final Z80CPU processor;
@@ -75,9 +77,15 @@ public class Nascom2CPUCard implements ICard, ICPUControl, INasBus {
         JMenuItem loadMenuItem = new JMenuItem(LOAD_TAPE);
         menu.add(loadMenuItem);
         loadMenuItem.addActionListener(this);
+        JMenuItem stopLoadMenuItem = new JMenuItem(STOP_LOADING);
+        menu.add(stopLoadMenuItem);
+        stopLoadMenuItem.addActionListener(this);
         JMenuItem saveMenuItem = new JMenuItem(SAVE_TAPE);
         menu.add(saveMenuItem);
         saveMenuItem.addActionListener(this);
+	JMenuItem stopSaveMenuItem = new JMenuItem(STOP_SAVING);
+        menu.add(stopSaveMenuItem);
+        stopSaveMenuItem.addActionListener(this);
     }
 
     /**
@@ -231,7 +239,13 @@ public class Nascom2CPUCard implements ICard, ICPUControl, INasBus {
         } else if (SAVE_TAPE.equals(menuCommand)) {
             System.out.println("-- Save --");
             ((OnboardIO) ioDevices).saveNewTape();
-        }
+        } else if (STOP_LOADING.equals(menuCommand)) {
+	    System.out.println("-- Stop loading --");
+	    ((OnboardIO) ioDevices).stopLoading();
+	} else if (STOP_SAVING.equals(menuCommand)) {
+	    System.out.println("-- Stop saving --");
+	    ((OnboardIO) ioDevices).stopSaving();
+	}
     }
 
     /**

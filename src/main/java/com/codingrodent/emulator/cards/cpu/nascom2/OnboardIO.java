@@ -185,4 +185,19 @@ class OnboardIO implements IBaseDevice {
     void saveNewTape() {
         cassetteTape.saveNewTape();
     }
+
+    /**
+     * Stop playback of loading tape
+     */
+    void stopLoading() {
+        cassetteTape.closeInput();
+    }
+
+    /**
+     * Stop recording to saving tape
+     */
+    void stopSaving() {
+        cassetteTape.closeOutput();
+    }
+
 }
