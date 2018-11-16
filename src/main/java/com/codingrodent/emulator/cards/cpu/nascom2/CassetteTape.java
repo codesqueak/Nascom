@@ -131,6 +131,7 @@ class CassetteTape {
         try {
             systemContext.logInfoEvent("Looking for tape to read: " + readFileName);
             tapeFileInput = new FileInputStream(readFileName);
+	    fillReadAhead();
             this.readFileName = readFileName;
         } catch (FileNotFoundException e) {
             systemContext.logErrorEvent("Unable to find tape to read: " + readFileName);
@@ -152,10 +153,10 @@ class CassetteTape {
         }
         tapeFileOutput = null;
         try {
-            systemContext.logInfoEvent("Looking for tape to write: " + readFileName);
+            systemContext.logInfoEvent("Looking for tape to write: " + writeFileName);
             tapeFileOutput = new FileOutputStream(writeFileName);
         } catch (FileNotFoundException e) {
-            systemContext.logErrorEvent("Unable to find tape to write: " + readFileName);
+            systemContext.logErrorEvent("Unable to find tape to write: " + writeFileName);
         }
     }
 
