@@ -55,7 +55,7 @@ public class PrimaryDisplay extends JFrame {
     public PrimaryDisplay() {
         super("Primary Display");
         /* the nascom 48*16 video display */
-        setBounds(0, 0, 800, 640);
+        //setBounds(0, 0, 800, 640);  -- bounds are now calculated based on contents
         //
         addWindowListener(new WindowHandler());
         // screenFrame.addKeyListener(new KeyboardHandler(keyboard));
@@ -138,7 +138,7 @@ public class PrimaryDisplay extends JFrame {
         // Set up the panel, enable this close and enable event handling
         // and show the window
         setVisible(true);
-        setResizable(false);
+        //setResizable(false);
     }
 
     void setLoadFileRAM(boolean state) {
