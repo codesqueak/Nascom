@@ -240,7 +240,7 @@ class NasBus implements INasBus {
         }
         //  zero or one cards responded
         if (NO_MEMORY_PRESENT == value) {
-            //System.out.println("Unlaimed I/O read : " + utilities.getWord(address));
+            //System.out.println("Unclaimed I/O read : " + utilities.getWord(address));
             return 0x7F;
         } else {
             return value;

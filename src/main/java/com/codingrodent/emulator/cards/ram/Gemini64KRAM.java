@@ -53,9 +53,6 @@ public class Gemini64KRAM extends MemoryCard {
         writeMask = 0x0010;
         switch (pageID) {
             default: {
-                page = 1;
-                readMask = 0x0001;
-                writeMask = 0x0010;
                 break;
             }
             case '2': {

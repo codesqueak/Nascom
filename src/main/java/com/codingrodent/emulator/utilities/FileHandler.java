@@ -28,6 +28,7 @@ package com.codingrodent.emulator.utilities;
 import com.codingrodent.emulator.emulator.SystemContext;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class FileHandler {
 
@@ -46,7 +47,7 @@ public class FileHandler {
      * @param fileName The file to read
      * @return The block of memory read
      * @throws FileNotFoundException Thrown if the file specified does not exist
-     * @throws IOException           Thrown if a failure occurs whiel reading the file
+     * @throws IOException           Thrown if a failure occurs while reading the file
      */
     public MemoryChunk readHexDumpFile(String fileName) throws IOException {
         MemoryChunk memory = new MemoryChunk();
@@ -54,7 +55,7 @@ public class FileHandler {
         int address, base;
 
         systemContext.logInfoEvent("Reading .nas format file : " + fileName);
-        LineNumberReader source = new LineNumberReader(new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF-8")));
+        LineNumberReader source = new LineNumberReader(new BufferedReader(new InputStreamReader(new FileInputStream(fileName), StandardCharsets.UTF_8)));
         //
         boolean firstTime = true;
         while (true) { // read a line
@@ -114,7 +115,7 @@ public class FileHandler {
      * @param base     Base address to be read into
      * @return The block of memory read
      * @throws FileNotFoundException Thrown if the file specified does not exist
-     * @throws IOException           Thrown if a failure occurs whiel reading the file
+     * @throws IOException           Thrown if a failure occurs while reading the file
      */
     public MemoryChunk readBinaryDumpFile(String fileName, int base) throws IOException {
         MemoryChunk memory = new MemoryChunk();

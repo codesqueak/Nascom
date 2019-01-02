@@ -28,7 +28,8 @@ package com.codingrodent.emulator.emulator;
 import com.codingrodent.emulator.cards.ICPUControl;
 import com.codingrodent.emulator.emulator.display.PrimaryDisplay;
 import com.codingrodent.emulator.nas80Bus.CardController;
-import org.apache.logging.log4j.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 

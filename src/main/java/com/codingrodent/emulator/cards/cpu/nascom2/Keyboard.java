@@ -36,7 +36,7 @@ class Keyboard implements IBaseDevice {
     private int position;
 
     /*
-     * The Nascom keyboar is painful.  A keystrokek is a set of byte query / returns to
+     * The Nascom keyboard is painful.  A keystroke is a set of byte query / returns to
      * map a row and column
      */
     Keyboard() {

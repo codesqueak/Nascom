@@ -28,6 +28,7 @@ package com.codingrodent.emulator.utilities;
 import com.codingrodent.emulator.cards.common.FDC17xx;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class DiskImage {
@@ -58,7 +59,7 @@ public class DiskImage {
             reader.dumpDiskToMemory(memory, 2, 0xF, 0x20);
             memory.setBase(0x0000);
             //
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("dump.nas"), "UTF-8"));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("dump.nas"), StandardCharsets.UTF_8));
             FileHandler fileHandler = new FileHandler();
             fileHandler.writeHexDumpFile(memory, writer);
         } catch (IOException ex) {
@@ -262,11 +263,7 @@ public class DiskImage {
         //
         for (int i = 0; i < sector.length; i = i + 16) {
             if (sector[i] >= 0) {
-                try {
-                    fileName = new String(Arrays.copyOfRange(sector, i, i + 8), "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    fileName = "????????";
-                }
+                fileName = new String(Arrays.copyOfRange(sector, i, i + 8), StandardCharsets.UTF_8);
                 executionAddress = getWord(sector, i + 8);
                 loadAddress = getWord(sector, i + 10);
                 startTrack = getByte(sector, i + 12);
@@ -414,10 +411,10 @@ public class DiskImage {
 
     private void dumpDiskToMemory(MemoryChunk memory, int track, int sector, int size) {
         for (int i = 0; i < size; i++) {
-            byte[] sctr = getSector(track, sector, 0);
-            dumpSector(sctr);
-            for (byte aSctr : sctr) {
-                memory.setByte(aSctr);
+            byte[] data = getSector(track, sector, 0);
+            dumpSector(data);
+            for (byte b : data) {
+                memory.setByte(b);
             }
             if (18 == sector) {
                 sector = 1;

@@ -45,7 +45,7 @@ public abstract class FDC17xx extends BaseCard {
     /**
      * Length codes are a bit tricky depending on which 17xx series devices is being used
      *
-     * @param fdc    The chup being used
+     * @param fdc    The chip being used
      * @param length The number of bytes in the sector
      * @return The length code of 0xFF if unknown
      */

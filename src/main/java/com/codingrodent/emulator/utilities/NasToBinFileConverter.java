@@ -28,6 +28,7 @@ package com.codingrodent.emulator.utilities;
 import com.codingrodent.emulator.emulator.SystemContext;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class NasToBinFileConverter {
     /**
@@ -40,8 +41,8 @@ public class NasToBinFileConverter {
         try {
             SystemContext context = SystemContext.createInstance();
             context.logInfoEvent("NAS to BIN file converter - Start");
-            NasToBinFileConverter convertor = new NasToBinFileConverter();
-            convertor.convert("temp");
+            NasToBinFileConverter converter = new NasToBinFileConverter();
+            converter.convert("temp");
             context.logInfoEvent("NAS to BIN file converter - Completed");
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -64,7 +65,7 @@ public class NasToBinFileConverter {
             File in = new File(path + File.separator + allFile);
             File out = new File(path + File.separator + allFile + ".bin");
             try {
-                LineNumberReader lr = new LineNumberReader(new BufferedReader(new InputStreamReader(new FileInputStream(in), "UTF-8")));
+                LineNumberReader lr = new LineNumberReader(new BufferedReader(new InputStreamReader(new FileInputStream(in), StandardCharsets.UTF_8)));
                 FileOutputStream fos = new FileOutputStream(out);
                 while (lr.ready()) {
                     String line = lr.readLine();

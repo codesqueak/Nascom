@@ -25,12 +25,20 @@
 
 package com.codingrodent.emulator.nas80Bus;
 
-import com.codingrodent.emulator.cards.*;
-import com.codingrodent.emulator.emulator.*;
-import com.codingrodent.emulator.utilities.*;
+import com.codingrodent.emulator.cards.ICPUControl;
+import com.codingrodent.emulator.cards.ICard;
+import com.codingrodent.emulator.emulator.CardData;
+import com.codingrodent.emulator.emulator.SystemContext;
+import com.codingrodent.emulator.utilities.FileHandler;
+import com.codingrodent.emulator.utilities.MemoryChunk;
+import com.codingrodent.emulator.utilities.Utilities;
 
 import javax.swing.*;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class CardController {
@@ -139,7 +147,7 @@ public class CardController {
         INasBus cpuCard = (INasBus) cardSlots[0];
         int checksum;
         try {
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "UTF-8"));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), StandardCharsets.UTF_8));
             for (int address = 0; address < 65536; address = address + 8) {
                 checksum = (address >> 8) + (address & 0x00FF);
                 writer.write(Utilities.getWord(address) + " ");

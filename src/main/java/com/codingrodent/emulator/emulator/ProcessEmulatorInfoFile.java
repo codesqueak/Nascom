@@ -25,10 +25,17 @@
 
 package com.codingrodent.emulator.emulator;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-import java.io.*;
-import java.util.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * This class holds an internal representation of the machineInfo.xml document.
@@ -46,19 +53,10 @@ class ProcessEmulatorInfoFile {
      * @throws ProcessEmulatorInfoFileException Thrown if unable to recover the document
      */
     ProcessEmulatorInfoFile() throws ProcessEmulatorInfoFileException {
-        try (Reader reader = new InputStreamReader(new FileInputStream(EMULATOR_INFO_FILE), "UTF-8")) {
+        try (Reader reader = new InputStreamReader(new FileInputStream(EMULATOR_INFO_FILE), StandardCharsets.UTF_8)) {
             Gson gson = new GsonBuilder().create();
             CardData[] cardData = gson.fromJson(reader, CardData[].class);
-            Arrays.sort(cardData, (a, b) -> {
-                int x = a.getOrder();
-                int y = b.getOrder();
-                if (x < y)
-                    return -1;
-                else if (x == y)
-                    return 0;
-                else
-                    return 1;
-            });
+            Arrays.sort(cardData, Comparator.comparingInt(CardData::getOrder));
             cardInfo = Arrays.asList(cardData);
         } catch (IOException e) {
             throw new ProcessEmulatorInfoFileException(e);

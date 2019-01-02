@@ -26,7 +26,9 @@
 package com.codingrodent.emulator.cards.bankswitch;
 
 import com.codingrodent.emulator.cards.common.BaseCard;
-import com.codingrodent.emulator.utilities.*;
+import com.codingrodent.emulator.utilities.FileHandler;
+import com.codingrodent.emulator.utilities.MemoryChunk;
+import com.codingrodent.emulator.utilities.Utilities;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -38,7 +40,7 @@ import java.util.Arrays;
  * space are supported.  Contents are chunked into 4K divisions, and either an
  * entire bank or just a 4K division of a bank may be assigned to RAM or an EPROM.
  * Divisions of a bank may be set up to mirror the same location in a lower-numbered
- * bank (e.g. so that a bank with some EPROMs but not enough to fill the address space
+ * bank (e.g. so that a bank with some EPROM's but not enough to fill the address space
  * may fill the remaining space with RAM from a different bank, or to allow an EPROM to
  * exist in multiple banks).
  * <p>
@@ -66,15 +68,14 @@ public class BankSwitcher extends BaseCard {
     private int addressBits, addressBitsMask;
     private int bankSelPort, bankSelBitMask, bankSelBitShift, bankCount;
     private int currentBank;
-    private int bankDivisions;
-    
+
     private short[][][] memory;
     private boolean[][] ramValid;
     private boolean[][] romValid;
     private boolean[] romValidAnyBank;
 
-    private final static int DIVSIZE = 4096;
-    private final static int DIVMASK = DIVSIZE-1;
+    private final static int DIV_SIZE = 4096;
+    private final static int DIV_MASK = DIV_SIZE - 1;
     
     /**
      * One off initialisation carried out after card object creation
@@ -83,23 +84,25 @@ public class BankSwitcher extends BaseCard {
     public void initialise() {
         addressBits = Utilities.getHexValue(cardProperties.getOrDefault("BaseAddress", "C000"));
 	String size = cardProperties.getOrDefault ("Size", "8K");
-	if (size.equals ("4K")) {
-	    addressBitsMask = ~0x0FFF;
-	    bankDivisions = 1;
-	}
-	else if (size.equals ("8K")) {
-	    addressBitsMask = ~0x1FFF;
-	    bankDivisions = 2;
-	}
-	else if (size.equals ("16K")) {
-	    addressBitsMask = ~0x3FFF;
-	    bankDivisions = 4;
-	}
-	else {
-	    String msg = "Unknown size for bank switcher: " + size;
-	    systemContext.logFatalEvent(getCardDetails() + ": " + msg);
-	    throw new RuntimeException (msg);
-	}
+        int bankDivisions;
+        switch (size) {
+            case "4K":
+                addressBitsMask = ~0x0FFF;
+                bankDivisions = 1;
+                break;
+            case "8K":
+                addressBitsMask = ~0x1FFF;
+                bankDivisions = 2;
+                break;
+            case "16K":
+                addressBitsMask = ~0x3FFF;
+                bankDivisions = 4;
+                break;
+            default:
+                String msg = "Unknown size for bank switcher: " + size;
+                systemContext.logFatalEvent(getCardDetails() + ": " + msg);
+                throw new RuntimeException(msg);
+        }
 	bankSelPort = Utilities.getHexValue(cardProperties.getOrDefault("BankSelPort", "8"));
 	bankSelBitShift = Utilities.getHexValue(cardProperties.getOrDefault("BankSelBitShift", "0"));
 	bankCount = Utilities.getHexValue(cardProperties.getOrDefault("BankCount", "8"));
@@ -139,7 +142,7 @@ public class BankSwitcher extends BaseCard {
 	    if ("true".equalsIgnoreCase(cardProperties.get("Bank"+bank+".RAMEnabled"))) {
 		for (int div = 0; div < bankDivisions; div ++) {
 		    ramValid[bank][div] = true;
-		    memory[bank][div] = new short[DIVSIZE];
+            memory[bank][div] = new short[DIV_SIZE];
 		}
 		systemContext.logInfoEvent (getCardDetails() + " bank " + bank + " RAM enabled");
 		continue;
@@ -147,7 +150,7 @@ public class BankSwitcher extends BaseCard {
 	    if ("true".equalsIgnoreCase(cardProperties.get("Bank"+bank+".ROMEnabled"))) {
 		short [][] romContent = loadRom (cardProperties.get("Bank"+bank+".ROM"));
 		if (romContent.length != bankDivisions) {
-		    String msg = "EPROM content should be exactly " + bankDivisions*DIVSIZE + " bytes but was " + romContent.length * romContent[0].length;
+            String msg = "EPROM content should be exactly " + bankDivisions * DIV_SIZE + " bytes but was " + romContent.length * romContent[0].length;
 		    systemContext.logFatalEvent(getCardDetails() + ": " + msg);
 		    throw new RuntimeException(msg);
 		}
@@ -162,14 +165,14 @@ public class BankSwitcher extends BaseCard {
 		String base = "Bank"+bank+".Div" + div + ".";
 		if ("true".equalsIgnoreCase(cardProperties.get(base+"RAMEnabled"))) {
 		    ramValid[bank][div] = true;
-		    memory[bank][div] = new short[DIVSIZE];
+            memory[bank][div] = new short[DIV_SIZE];
 		    systemContext.logInfoEvent (getCardDetails() + " bank " + bank + " div " + div + " RAM enabled");
 		    continue;
 		}
 		if ("true".equalsIgnoreCase(cardProperties.get(base+"ROMEnabled"))) {
 		    short [][] romContent = loadRom (cardProperties.get(base+"ROM"));
 		    if (romContent.length != 1) {
-			String msg = "EPROM content should be exactly " + DIVSIZE + " bytes but was " + romContent.length * romContent[0].length;
+                String msg = "EPROM content should be exactly " + DIV_SIZE + " bytes but was " + romContent.length * romContent[0].length;
 			systemContext.logFatalEvent(getCardDetails() + ": " + msg);
 			throw new RuntimeException(msg);
 		    }
@@ -180,16 +183,16 @@ public class BankSwitcher extends BaseCard {
 		}
 		if (cardProperties.get(base+"MirrorBank") != null)
 		{
-		    int srcbank = Integer.parseInt(cardProperties.get(base+"MirrorBank"));
-		    if (srcbank < 0 || srcbank >= bank) {
-			String msg = "Memory can only be mirrored from banks with lower numbers (bank " + bank + " div " + div + " cannot mirror " + srcbank + ")";
+            int srcBank = Integer.parseInt(cardProperties.get(base + "MirrorBank"));
+            if (srcBank < 0 || srcBank >= bank) {
+                String msg = "Memory can only be mirrored from banks with lower numbers (bank " + bank + " div " + div + " cannot mirror " + srcBank + ")";
 			systemContext.logFatalEvent(getCardDetails() + ": " + msg);
 			throw new RuntimeException(msg);
 		    }
-		    romValid[bank][div] = romValid[srcbank][div];
-		    ramValid[bank][div] = ramValid[srcbank][div];
-		    memory[bank][div] = memory[srcbank][div];
-		    systemContext.logInfoEvent (getCardDetails() + " bank " + bank + " div " + div + " mirroring bank " + srcbank);
+            romValid[bank][div] = romValid[srcBank][div];
+            ramValid[bank][div] = ramValid[srcBank][div];
+            memory[bank][div] = memory[srcBank][div];
+            systemContext.logInfoEvent(getCardDetails() + " bank " + bank + " div " + div + " mirroring bank " + srcBank);
 		}
 	    }
 	}
@@ -211,14 +214,14 @@ public class BankSwitcher extends BaseCard {
 	    MemoryChunk eprom = fileHandler.readHexDumpFile(filename);
 	    short[] rom = eprom.getMemoryChunk();
 	    int length = eprom.getSize();
-	    if (length % DIVSIZE != 0) {
+        if (length % DIV_SIZE != 0) {
 		String msg = "The EPROM (" + filename + ") is not a multiple of 4K bytes (" + length + " bytes found)";
 		systemContext.logFatalEvent(msg);
 		throw new RuntimeException(msg);
 	    }
-	    short [] [] chunks = new short[length/DIVSIZE][];
+        short[][] chunks = new short[length / DIV_SIZE][];
 	    for (int i = 0; i < chunks.length; i ++)
-		chunks[i] = Arrays.copyOfRange (rom, i*DIVSIZE, (i+1)*DIVSIZE);
+            chunks[i] = Arrays.copyOfRange(rom, i * DIV_SIZE, (i + 1) * DIV_SIZE);
 	    
 	    return chunks;
 	} catch (IOException ex) {
@@ -277,7 +280,7 @@ public class BankSwitcher extends BaseCard {
     public boolean memoryWrite(int address, int data, boolean ramdis) {
 	int div = divForAddress(address);
         if (div >= 0 && (!ramdis) && ramValid[currentBank][div]) {
-            memory[currentBank][div][address&DIVMASK] = (short) data;
+            memory[currentBank][div][address & DIV_MASK] = (short) data;
             return true;
         }
         return false;
@@ -294,7 +297,7 @@ public class BankSwitcher extends BaseCard {
     public int memoryRead(int address, boolean ramdis) {
 	int div = divForAddress(address);
         if (div >= 0 && (((!ramdis) && ramValid[currentBank][div]) || (romValid[currentBank][div]))) {
-            return memory[currentBank][div][address&DIVMASK];
+            return memory[currentBank][div][address & DIV_MASK];
         } else {
             return NO_MEMORY_PRESENT;
         }
@@ -310,7 +313,7 @@ public class BankSwitcher extends BaseCard {
     public int memoryRead(int address) {
 	int div = divForAddress(address);
         if (div >= 0 && (ramValid[currentBank][div] || romValid[currentBank][div])) {
-            return memory[currentBank][div][address&DIVMASK];
+            return memory[currentBank][div][address & DIV_MASK];
         } else {
             return BUS_FLOAT;
         }
@@ -349,7 +352,7 @@ public class BankSwitcher extends BaseCard {
     {
 	//System.out.println ("divForAddress: " + Integer.toHexString(address) + " " + Integer.toHexString(addressBitsMask) + " " + Integer.toHexString(address & addressBitsMask) + " " + Integer.toHexString(addressBits));
 	if ((address & addressBitsMask) != addressBits) return -1;
-	return (address & ~addressBitsMask) / DIVSIZE;
+        return (address & ~addressBitsMask) / DIV_SIZE;
     }
 
     /**

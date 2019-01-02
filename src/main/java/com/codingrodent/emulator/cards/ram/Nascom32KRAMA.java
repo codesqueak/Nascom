@@ -26,7 +26,9 @@
 package com.codingrodent.emulator.cards.ram;
 
 import com.codingrodent.emulator.cards.common.MemoryCard;
-import com.codingrodent.emulator.utilities.*;
+import com.codingrodent.emulator.utilities.FileHandler;
+import com.codingrodent.emulator.utilities.MemoryChunk;
+import com.codingrodent.emulator.utilities.Utilities;
 
 import java.io.IOException;
 

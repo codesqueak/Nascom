@@ -27,7 +27,9 @@ package com.codingrodent.emulator.cards.cpu.nascom2;
 
 import com.codingrodent.emulator.emulator.SystemContext;
 import com.codingrodent.emulator.nas80Bus.INasBus;
-import com.codingrodent.emulator.utilities.*;
+import com.codingrodent.emulator.utilities.FileHandler;
+import com.codingrodent.emulator.utilities.MemoryChunk;
+import com.codingrodent.emulator.utilities.Utilities;
 import com.codingrodent.microprocessor.IMemory;
 
 import java.io.IOException;
@@ -182,18 +184,16 @@ class OnboardMemory implements IMemory {
                     //
                     property = cardProperties.get("BankAFile");
                     if (null != property) {
-                        MemoryChunk bankAfile = fileHandler.readHexDumpFile(property);
-                        short[] rom = bankAfile.getMemoryChunk();
-                        int base = bankAfile.getBase();
-                        int length = bankAfile.getSize();
+                        MemoryChunk bankAFile = fileHandler.readHexDumpFile(property);
+                        short[] rom = bankAFile.getMemoryChunk();
+                        int base = bankAFile.getBase();
+                        int length = bankAFile.getSize();
                         System.arraycopy(rom, 0, memory, base, length);
                         systemContext.logInfoEvent("Loaded a file for bank A, " + property);
                     }
                     //
                     bankAInstalled = bankAROMInstalled | bankARAMInstalled;
                 }
-            } else {
-                bankAInstalled = false;
             }
             //
             // Bank B memory
@@ -231,18 +231,16 @@ class OnboardMemory implements IMemory {
                     //
                     property = cardProperties.get("BankBFile");
                     if (null != property) {
-                        MemoryChunk bankBfile = fileHandler.readHexDumpFile(property);
-                        short[] rom = bankBfile.getMemoryChunk();
-                        int base = bankBfile.getBase();
-                        int length = bankBfile.getSize();
+                        MemoryChunk bankBFile = fileHandler.readHexDumpFile(property);
+                        short[] rom = bankBFile.getMemoryChunk();
+                        int base = bankBFile.getBase();
+                        int length = bankBFile.getSize();
                         System.arraycopy(rom, 0, memory, base, length);
                         systemContext.logInfoEvent("Loaded a file for bank B, " + property);
                     }
                     //
                     bankBInstalled = bankBROMInstalled | bankBRAMInstalled;
                 }
-            } else {
-                bankBInstalled = false;
             }
             //
             systemContext.logInfoEvent("Nascom 2 Mainboard Memory Configuration");
@@ -261,7 +259,7 @@ class OnboardMemory implements IMemory {
                 systemContext.logInfoEvent("Memory range bank B " + Utilities.getWord(bankBBase) + " to " + Utilities.getWord(bankBEnd - 1) + " using " + epromBType + " devices");
             }
             //
-            // precalculate onboard memory
+            // pre calculate onboard memory
             //
             for (int address = 0; address < MAX_MEMORY; address++) {
                 bankAValid[address] = isBankARAM(address) || isBankAROM(address);

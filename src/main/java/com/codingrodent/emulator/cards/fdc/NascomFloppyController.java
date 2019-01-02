@@ -465,7 +465,7 @@ public class NascomFloppyController extends FDC17xx {
     }
 
     /**
-     * Read the stsus port
+     * Read the status port
      *
      * @return Status port value
      */
@@ -520,7 +520,7 @@ public class NascomFloppyController extends FDC17xx {
     }
 
     /**
-     * Read a byte from a sector. If no data avaialble, flag the error.
+     * Read a byte from a sector. If no data available, flag the error.
      *
      * @return The data value from the sector
      */

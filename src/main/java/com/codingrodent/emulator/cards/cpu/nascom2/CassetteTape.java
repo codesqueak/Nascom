@@ -36,7 +36,6 @@ class CassetteTape {
     private boolean tapeLED;
     private FileInputStream tapeFileInput;
     private FileOutputStream tapeFileOutput;
-    private String readFileName;
     private int readAheadChar;
 
     CassetteTape() {
@@ -84,7 +83,7 @@ class CassetteTape {
     /**
      * Store a char from input in readAheadChar; close input stream if we reach the end.
      */
-    void fillReadAhead () {
+    private void fillReadAhead() {
 	try {
 	    if (tapeFileInput == null) return;
 	    readAheadChar = tapeFileInput.read ();
@@ -131,8 +130,7 @@ class CassetteTape {
         try {
             systemContext.logInfoEvent("Looking for tape to read: " + readFileName);
             tapeFileInput = new FileInputStream(readFileName);
-	    fillReadAhead();
-            this.readFileName = readFileName;
+            fillReadAhead();
         } catch (FileNotFoundException e) {
             systemContext.logErrorEvent("Unable to find tape to read: " + readFileName);
         }

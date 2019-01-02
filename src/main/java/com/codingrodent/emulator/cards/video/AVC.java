@@ -29,7 +29,8 @@ import com.codingrodent.emulator.cards.common.BaseCard;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.MemoryImageSource;
 
 public class AVC extends BaseCard implements ActionListener {
@@ -85,7 +86,7 @@ public class AVC extends BaseCard implements ActionListener {
         avcFrame = new AVCFrame("Nascom 2 AVC Model B");
         avcFrame.getContentPane().setBackground(Color.BLACK);
         //
-        // Block colour palatte settings
+        // Block colour palette settings
         palette[0] = AVC_BLACK;
         palette[1] = AVC_BLUE;
         palette[2] = AVC_GREEN;
@@ -295,7 +296,7 @@ public class AVC extends BaseCard implements ActionListener {
     }
 
     /**
-     * Read data from the AVC mamory (If paged in)
+     * Read data from the AVC memory (If paged in)
      *
      * @param address The address to read from
      * @param ramdis  RAMDIS bus signal
@@ -311,7 +312,7 @@ public class AVC extends BaseCard implements ActionListener {
     }
 
     /**
-     * Read data from the AVC mamory (If paged in)
+     * Read data from the AVC memory (If paged in)
      *
      * @param address The address to read from
      * @return The byte read
@@ -515,8 +516,6 @@ public class AVC extends BaseCard implements ActionListener {
         // number of memory planes selected
         switch (temp) {
             case 0: {
-                memorySelected = 0;
-                pagedIn = false;
                 break;
             }
             case 1:

@@ -164,7 +164,7 @@ class OnboardIO implements IBaseDevice {
     }
 
     /**
-     * Tell the I/O system about the N2 card. Neede for a call-back to start the single step NMI
+     * Tell the I/O system about the N2 card. Need for a call-back to start the single step NMI
      *
      * @param cpuCard The owing N2 cpu card
      */

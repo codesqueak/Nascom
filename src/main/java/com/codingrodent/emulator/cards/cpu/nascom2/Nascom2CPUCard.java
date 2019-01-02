@@ -25,11 +25,16 @@
 
 package com.codingrodent.emulator.cards.cpu.nascom2;
 
-import com.codingrodent.emulator.cards.*;
+import com.codingrodent.emulator.cards.ICPUControl;
+import com.codingrodent.emulator.cards.ICard;
 import com.codingrodent.emulator.emulator.SystemContext;
 import com.codingrodent.emulator.nas80Bus.INasBus;
-import com.codingrodent.emulator.utilities.*;
-import com.codingrodent.microprocessor.*;
+import com.codingrodent.emulator.utilities.FileHandler;
+import com.codingrodent.emulator.utilities.MemoryChunk;
+import com.codingrodent.emulator.utilities.Utilities;
+import com.codingrodent.microprocessor.IBaseDevice;
+import com.codingrodent.microprocessor.IMemory;
+import com.codingrodent.microprocessor.ProcessorException;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

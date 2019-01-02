@@ -26,13 +26,14 @@
 package com.codingrodent.emulator.cards.cpu.nascom2;
 
 import com.codingrodent.emulator.emulator.SystemContext;
-import com.codingrodent.emulator.emulator.display.WindowHandler;
 import com.codingrodent.emulator.utilities.MemoryChunk;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.MemoryImageSource;
+import java.awt.image.VolatileImage;
 
 /*
  * convert video memory writes into bit displays
@@ -183,12 +184,12 @@ class StandardDisplayDevice implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 	Dimension displaySize = canvas.getSize();
 	float scale = Math.min(displaySize.width / (float)(48*8), displaySize.height / (float)(16*16));
-	scale = Math.min (Math.max (1, scale), this.scale);
+        scale = Math.min(Math.max(1, scale), StandardDisplayDevice.scale);
 	displaySize.width = (int)(48*8*scale+0.5);
 	displaySize.height = (int)(16*16*scale + 0.5);
 	canvas.getGraphics().drawImage(imageBufferVolatile,
 				       0, 0, displaySize.width, displaySize.height, // dst
-				       0, 0, 48*8*this.scale, 16*16*this.scale,     // src
+            0, 0, 48 * 8 * StandardDisplayDevice.scale, 16 * 16 * StandardDisplayDevice.scale,     // src
 				       null);
     }
 }
