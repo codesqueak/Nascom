@@ -87,9 +87,9 @@ class KeyboardHandler implements KeyListener, WindowFocusListener {
     public void keyPressed(KeyEvent e) {
         synchronized (buffer) {
             timeKeyPressed = System.nanoTime() / 1000000;
-            // System.out.println("Pressed "+e.getKeyChar());
-            // System.out.println("Key pressed was : [" + e.getKeyCode() + "]["
-            // + (int) e.getKeyChar() + "][" + e.getKeyChar() + "]");
+//            System.out.println("Pressed " + e.getKeyChar());
+//            System.out.println("Key pressed was : [" + e.getKeyCode() + "]["
+//                    + (int) e.getKeyChar() + "][" + e.getKeyChar() + "]");
             //
             int keyCode = e.getKeyCode();
             //
@@ -128,11 +128,21 @@ class KeyboardHandler implements KeyListener, WindowFocusListener {
                         break;
                     case KeyEvent.VK_SEMICOLON:
                         keyCode = KeyEvent.VK_COLON;
-                        setBit(0, 4);
+                        setSHIFT();
                         break;
                     case KeyEvent.VK_EQUALS:
                         keyCode = KeyEvent.VK_SEMICOLON;
-                        resetBit(0, 4);
+                        resetSHIFT();
+                        break;
+                    case KeyEvent.VK_QUOTE:
+                        keyCode = KeyEvent.VK_AT;
+                        resetSHIFT();
+                        break;
+                    case KeyEvent.VK_OPEN_BRACKET:
+                        keyCode = KeyEvent.VK_BRACELEFT;
+                        break;
+                    case KeyEvent.VK_CLOSE_BRACKET:
+                        keyCode = KeyEvent.VK_BRACERIGHT;
                         break;
                     default:
                 }
@@ -145,7 +155,7 @@ class KeyboardHandler implements KeyListener, WindowFocusListener {
                     resetBit(5, 6);
                     break;
                 case KeyEvent.VK_CONTROL:
-                    resetBit(0, 3);
+                    resetCTRL();
                     break;
                 case KeyEvent.VK_LEFT:
                     resetBit(2, 6);
@@ -187,13 +197,14 @@ class KeyboardHandler implements KeyListener, WindowFocusListener {
                     resetBit(6, 0);
                     break;
                 case KeyEvent.VK_QUOTE: // @
-                    resetBit(0, 5);
+                    resetSHIFT();
+                    resetBit(3, 2);
                     break;
                 case KeyEvent.VK_MINUS:
                     resetBit(0, 2);
                     break;
                 case KeyEvent.VK_EQUALS:
-                    resetBit(0, 4);
+                    resetSHIFT();
                     resetBit(0, 2);
                     break;
                 case KeyEvent.VK_OPEN_BRACKET:
@@ -203,8 +214,21 @@ class KeyboardHandler implements KeyListener, WindowFocusListener {
                     resetBit(7, 6);
                     break;
                 case KeyEvent.VK_BACK_SLASH:
-                    resetBit(0, 4); // \
+                    resetSHIFT(); // \
                     resetBit(6, 6);
+                    break;
+                case KeyEvent.VK_AT:
+                    resetBit(0, 5);
+                    break;
+                case KeyEvent.VK_BRACELEFT:
+                    resetCTRL();
+                    setSHIFT();
+                    resetBit(5, 0);
+                    break;
+                case KeyEvent.VK_BRACERIGHT:
+                    resetCTRL();
+                    resetSHIFT();
+                    resetBit(0, 2);
                     break;
 
                 // A..Z
@@ -321,11 +345,27 @@ class KeyboardHandler implements KeyListener, WindowFocusListener {
                 // Special non-standard keys
                 case KeyEvent.VK_ESCAPE:
                     resetBit(0, 1);
-                    resetBit(0, 4);
+                    resetSHIFT();
                     break;
             }
             keyboard.setKeyStroke(buffer);
         }
+    }
+
+    private void resetCTRL() {
+        resetBit(0, 3);
+    }
+
+    private void setCTRL() {
+        setBit(0, 3);
+    }
+
+    private void resetSHIFT() {
+        resetBit(0, 4);
+    }
+
+    private void setSHIFT() {
+        setBit(0, 4);
     }
 
     /*
@@ -387,6 +427,15 @@ class KeyboardHandler implements KeyListener, WindowFocusListener {
                     case KeyEvent.VK_EQUALS:
                         keyCode = KeyEvent.VK_SEMICOLON;
                         break;
+                    case KeyEvent.VK_QUOTE:
+                        keyCode = KeyEvent.VK_AT;
+                        break;
+                    case KeyEvent.VK_OPEN_BRACKET:
+                        keyCode = KeyEvent.VK_BRACELEFT;
+                        break;
+                    case KeyEvent.VK_CLOSE_BRACKET:
+                        keyCode = KeyEvent.VK_BRACERIGHT;
+                        break;
                     default:
                 }
             }
@@ -398,7 +447,7 @@ class KeyboardHandler implements KeyListener, WindowFocusListener {
                     setBit(5, 6);
                     break;
                 case KeyEvent.VK_CONTROL:
-                    setBit(0, 3);
+                    setCTRL();
                     break;
                 case KeyEvent.VK_LEFT:
                     setBit(2, 6);
@@ -440,26 +489,39 @@ class KeyboardHandler implements KeyListener, WindowFocusListener {
                     setBit(6, 0);
                     break;
                 case KeyEvent.VK_QUOTE: // @
-                    setBit(0, 5);
+                    setSHIFT();
+                    setBit(3, 2);
                     break;
                 case KeyEvent.VK_MINUS:
                     setBit(0, 2);
                     break;
                 case KeyEvent.VK_EQUALS:
-                    setBit(0, 4);
+                    setSHIFT();
                     setBit(0, 2);
                     break;
                 case KeyEvent.VK_OPEN_BRACKET:
-                    setBit(0, 4);
+                    setSHIFT();
                     setBit(6, 6);
                     break;
                 case KeyEvent.VK_CLOSE_BRACKET:
-                    setBit(0, 4);
+                    setSHIFT();
                     setBit(7, 6);
                     break;
                 case KeyEvent.VK_BACK_SLASH:
-                    setBit(0, 4); // [
+                    setSHIFT(); // [
                     setBit(6, 6);
+                    break;
+                case KeyEvent.VK_AT:
+                    setBit(0, 5);
+                    break;
+                case KeyEvent.VK_BRACELEFT:
+                    setCTRL();
+                    setBit(5, 0);
+                    break;
+                case KeyEvent.VK_BRACERIGHT:
+                    setCTRL();
+                    setSHIFT();
+                    setBit(0, 2);
                     break;
 
                 // A..Z
@@ -588,14 +650,14 @@ class KeyboardHandler implements KeyListener, WindowFocusListener {
      */
     private void SetControlKeyBits() {
         if (shiftEnabled) {
-            resetBit(0, 4);
+            resetSHIFT();
         } else {
-            setBit(0, 4);
+            setSHIFT();
         }
         if (ctrlEnabled) {
-            resetBit(0, 3);
+            resetCTRL();
         } else {
-            setBit(0, 3);
+            setCTRL();
         }
         if (graphEnabled) {
             resetBit(5, 6);
@@ -607,11 +669,11 @@ class KeyboardHandler implements KeyListener, WindowFocusListener {
     /**
      * Set a keyboard bit corresponding to the key press
      *
-     * @param count int Which byte in the sequence, 0..7
-     * @param bit   int Which bit in the byte
+     * @param sequenceByte int Which byte in the sequence, 0..7
+     * @param bit          int Which bit in the byte
      */
-    private void setBit(int count, int bit) {
-        int item = buffer[count];
+    private void setBit(int sequenceByte, int bit) {
+        int item = buffer[sequenceByte];
         switch (bit) {
             default:
                 item = item | 0x01;
@@ -638,17 +700,17 @@ class KeyboardHandler implements KeyListener, WindowFocusListener {
                 item = item | 0x80;
                 break;
         }
-        buffer[count] = item;
+        buffer[sequenceByte] = item;
     }
 
     /**
      * Set a keyboard bit corresponding to the key press
      *
-     * @param count int Which byte in the sequence, 0..7
-     * @param bit   int Which bit in the byte
+     * @param sequenceByte int Which byte in the sequence, 0..7
+     * @param bit          int Which bit in the byte
      */
-    private void resetBit(int count, int bit) {
-        int item = buffer[count];
+    private void resetBit(int sequenceByte, int bit) {
+        int item = buffer[sequenceByte];
         switch (bit) {
             default:
                 item = item & 0xFE;
@@ -675,6 +737,6 @@ class KeyboardHandler implements KeyListener, WindowFocusListener {
                 item = item & 0x7F;
                 break;
         }
-        buffer[count] = item;
+        buffer[sequenceByte] = item;
     }
 }
