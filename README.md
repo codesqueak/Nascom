@@ -106,7 +106,7 @@ To run the emulator, the minimum software required is an operating system. When 
 
 1. CPU throttling is erratic, does not always work.
 2. Code needs a serious tidy up / rewrite in some places
-3. ...
+
 
 Let me know of any odd things that happen!
 
