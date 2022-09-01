@@ -29,7 +29,7 @@ At present the available version of the Jacoco plugin (2.0.1 at time of writing)
 8. run java -jar NascomEmulator-0.1.0.jar
 9. Enjoy that 4MHz goodness !
 
-###Configuration:
+### Configuration:
 
 The emulator works by emulating the 80-BUS,  not any specific computer built on this bus. By use of
 configuration files, any 80-BUS based system can be constructed.  This is done by supplying a class file

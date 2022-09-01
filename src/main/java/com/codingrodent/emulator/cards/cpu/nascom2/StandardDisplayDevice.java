@@ -30,10 +30,8 @@ import com.codingrodent.emulator.utilities.MemoryChunk;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.MemoryImageSource;
-import java.awt.image.VolatileImage;
+import java.awt.event.*;
+import java.awt.image.*;
 
 /*
  * convert video memory writes into bit displays
@@ -68,10 +66,10 @@ class StandardDisplayDevice implements ActionListener {
         /* the nascom 48*16 video display */
         screenFrame = SystemContext.createInstance().getPrimaryDisplay();
         //
-	canvas = new JPanel ();
-        screenFrame.getContentPane().add (BorderLayout.CENTER, canvas);
-	canvas.setPreferredSize(new Dimension(columns * rowBits * scale, rows * columnBits * scale));
-	canvas.setMinimumSize(new Dimension(columns * rowBits, rows * columnBits));
+        canvas = new JPanel();
+        screenFrame.getContentPane().add(BorderLayout.CENTER, canvas);
+        canvas.setPreferredSize(new Dimension(columns * rowBits * scale, rows * columnBits * scale));
+        canvas.setMinimumSize(new Dimension(columns * rowBits, rows * columnBits));
         //screenFrame.addWindowListener(new WindowHandler());
         // Set up the panel, enable this close and enable event handling
         // screenFrame.enableEvents(AWTEvent.WINDOW_EVENT_MASK | AWTEvent.KEY_EVENT_MASK | AWTEvent.ACTION_EVENT_MASK);
@@ -182,14 +180,14 @@ class StandardDisplayDevice implements ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-	Dimension displaySize = canvas.getSize();
-	float scale = Math.min(displaySize.width / (float)(48*8), displaySize.height / (float)(16*16));
+        Dimension displaySize = canvas.getSize();
+        float scale = Math.min(displaySize.width / (float) (48 * 8), displaySize.height / (float) (16 * 16));
         scale = Math.min(Math.max(1, scale), StandardDisplayDevice.scale);
-	displaySize.width = (int)(48*8*scale+0.5);
-	displaySize.height = (int)(16*16*scale + 0.5);
-	canvas.getGraphics().drawImage(imageBufferVolatile,
-				       0, 0, displaySize.width, displaySize.height, // dst
-            0, 0, 48 * 8 * StandardDisplayDevice.scale, 16 * 16 * StandardDisplayDevice.scale,     // src
-				       null);
+        displaySize.width = (int) (48 * 8 * scale + 0.5);
+        displaySize.height = (int) (16 * 16 * scale + 0.5);
+        canvas.getGraphics().drawImage(imageBufferVolatile,
+                0, 0, displaySize.width, displaySize.height, // dst
+                0, 0, 48 * 8 * StandardDisplayDevice.scale, 16 * 16 * StandardDisplayDevice.scale,     // src
+                null);
     }
 }

@@ -25,8 +25,11 @@
 
 package com.codingrodent.emulator.emulator;
 
+import java.io.Serial;
+
 public class ProcessEmulatorInfoFileException extends Exception {
 
+    @Serial
     private static final long serialVersionUID = 3256446889040689458L;
 
     //

@@ -123,18 +123,10 @@ public abstract class FDC17xx extends BaseCard {
             String fileName = file.getAbsolutePath();
             systemContext.logDebugEvent("Saving disk image to " + fileName);
             switch (drive) {
-                default:
-                    disk0.dumpANADiskToFile(fileName, fdc);
-                    break;
-                case 1:
-                    disk1.dumpANADiskToFile(fileName, fdc);
-                    break;
-                case 2:
-                    disk2.dumpANADiskToFile(fileName, fdc);
-                    break;
-                case 3:
-                    disk3.dumpANADiskToFile(fileName, fdc);
-                    break;
+                default -> disk0.dumpANADiskToFile(fileName, fdc);
+                case 1 -> disk1.dumpANADiskToFile(fileName, fdc);
+                case 2 -> disk2.dumpANADiskToFile(fileName, fdc);
+                case 3 -> disk3.dumpANADiskToFile(fileName, fdc);
             }
         }
     }
@@ -153,22 +145,22 @@ public abstract class FDC17xx extends BaseCard {
             String fileName = file.getAbsolutePath();
             systemContext.logDebugEvent("Loading disk file from " + fileName);
             switch (drive) {
-                default:
+                default -> {
                     disk0.ejectDisk();
                     disk0.loadANADisk(new File(fileName));
-                    break;
-                case 1:
+                }
+                case 1 -> {
                     disk1.ejectDisk();
                     disk1.loadANADisk(new File(fileName));
-                    break;
-                case 2:
+                }
+                case 2 -> {
                     disk2.ejectDisk();
                     disk2.loadANADisk(new File(fileName));
-                    break;
-                case 3:
+                }
+                case 3 -> {
                     disk3.ejectDisk();
                     disk3.loadANADisk(new File(fileName));
-                    break;
+                }
             }
         }
     }
@@ -243,18 +235,10 @@ public abstract class FDC17xx extends BaseCard {
         //
         try {
             switch (disk) {
-                default:
-                    disk0.diskDumpReader(new File(fileName), tracks, sectors, size, sides);
-                    break;
-                case 1:
-                    disk1.diskDumpReader(new File(fileName), tracks, sectors, size, sides);
-                    break;
-                case 2:
-                    disk2.diskDumpReader(new File(fileName), tracks, sectors, size, sides);
-                    break;
-                case 3:
-                    disk3.diskDumpReader(new File(fileName), tracks, sectors, size, sides);
-                    break;
+                default -> disk0.diskDumpReader(new File(fileName), tracks, sectors, size, sides);
+                case 1 -> disk1.diskDumpReader(new File(fileName), tracks, sectors, size, sides);
+                case 2 -> disk2.diskDumpReader(new File(fileName), tracks, sectors, size, sides);
+                case 3 -> disk3.diskDumpReader(new File(fileName), tracks, sectors, size, sides);
             }
         } catch (Exception e) {
             throw new RuntimeException("Unable to load disk image. " + e.getMessage());

@@ -29,9 +29,9 @@ import com.codingrodent.emulator.cards.common.BaseCard;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.awt.image.MemoryImageSource;
+import java.util.Arrays;
 
 public class AVC extends BaseCard implements ActionListener {
 
@@ -175,9 +175,7 @@ public class AVC extends BaseCard implements ActionListener {
     @Override
     public void reset() {
         // reset the control register mirrors
-        for (int i = 0; i < CRTCRegisters.length; i++) {
-            CRTCRegisters[i] = 0;
-        }
+        Arrays.fill(CRTCRegisters, 0);
         redSelected = false;
         greenSelected = false;
         blueSelected = false;
@@ -224,20 +222,11 @@ public class AVC extends BaseCard implements ActionListener {
     @Override
     public void ioWrite(final int address, final int data) {
         switch (address) {
-            case 0xB0: {
-                CRTCControlWrite(data);
-                break;
+            case 0xB0 -> CRTCControlWrite(data);
+            case 0xB1 -> CRTCDataWrite(data);
+            case 0xB2 -> swapPagesWrite(data);
+            default -> {
             }
-            case 0xB1: {
-                CRTCDataWrite(data);
-                break;
-            }
-            case 0xB2: {
-                swapPagesWrite(data);
-                break;
-            }
-            default:
-                break;
         }
     }
 
@@ -419,7 +408,7 @@ public class AVC extends BaseCard implements ActionListener {
     }
 
     /**
-     * update a single byte in the colour planes for high res display
+     * update a single byte in the colour planes for high-res display
      *
      * @param address The address the data was written to
      */
@@ -515,30 +504,20 @@ public class AVC extends BaseCard implements ActionListener {
         int temp = data & 0x07;
         // number of memory planes selected
         switch (temp) {
-            case 0: {
-                break;
-            }
-            case 1:
-            case 2:
-            case 4: {
+            case 1, 2, 4 -> {
                 memorySelected = 1;
                 pagedIn = true;
-                break;
             }
-            case 3:
-            case 5:
-            case 6: {
+            case 3, 5, 6 -> {
                 memorySelected = 2;
                 pagedIn = true;
-                break;
             }
-            case 7: {
+            case 7 -> {
                 memorySelected = 3;
                 pagedIn = true;
-                break;
             }
-            default:
-                break;
+            default -> {
+            }
         }
         // if the display has changed, reselect the image
         if ((data & 0x78) != (lastB2 & 0x78)) {

@@ -25,19 +25,12 @@
 
 package com.codingrodent.emulator.nas80Bus;
 
-import com.codingrodent.emulator.cards.ICPUControl;
-import com.codingrodent.emulator.cards.ICard;
-import com.codingrodent.emulator.emulator.CardData;
-import com.codingrodent.emulator.emulator.SystemContext;
-import com.codingrodent.emulator.utilities.FileHandler;
-import com.codingrodent.emulator.utilities.MemoryChunk;
-import com.codingrodent.emulator.utilities.Utilities;
+import com.codingrodent.emulator.cards.*;
+import com.codingrodent.emulator.emulator.*;
+import com.codingrodent.emulator.utilities.*;
 
 import javax.swing.*;
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -82,7 +75,7 @@ public class CardController {
                 String className = cardData.getClazz();
                 try {
                     Class<?> card = Class.forName(className);
-                    ICard genericCard = (ICard) card.newInstance();
+                    ICard genericCard = (ICard) card.getDeclaredConstructor().newInstance();
                     genericCard.setCardProperties(cardData.getProperties());
                     genericCard.setCardName(cardData.getName());
                     cardData.setDetails(genericCard.getCardDetails());

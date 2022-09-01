@@ -197,7 +197,6 @@ public class NascomFloppyController extends FDC17xx {
                 }
             }
         }
-
     }
 
     /**
@@ -208,26 +207,10 @@ public class NascomFloppyController extends FDC17xx {
      */
     @Override
     public boolean isInputPort(int address) {
-        switch (address) {
-            case statusPort:
-                return true;
-            case trackPort:
-                return true;
-            case sectorPort:
-                return true;
-            case dataPort:
-                return true;
-            case drivePort:
-                return true;
-            case intrqPort:
-                return true;
-
-            case 0xE6:
-                return true;
-            case 0xE7:
-                return true;
-        }
-        return false;
+        return switch (address) {
+            case statusPort, trackPort, sectorPort, dataPort, drivePort, intrqPort, 0xE6, 0xE7 -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -238,24 +221,10 @@ public class NascomFloppyController extends FDC17xx {
      */
     @Override
     public boolean isOutputPort(int address) {
-        switch (address) {
-            case commandPort:
-                return true;
-            case trackPort:
-                return true;
-            case sectorPort:
-                return true;
-            case dataPort:
-                return true;
-            case drivePort:
-                return true;
-            case 0xE6:
-                return true;
-            case 0xE7:
-                return true;
-
-        }
-        return false;
+        return switch (address) {
+            case commandPort, trackPort, sectorPort, dataPort, drivePort, 0xE6, 0xE7 -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -267,25 +236,12 @@ public class NascomFloppyController extends FDC17xx {
     @Override
     public void ioWrite(int address, int data) {
         switch (address) {
-            case commandPort:
-                writeCommand(data);
-                break;
+            case commandPort -> writeCommand(data);
+            case trackPort -> writeTrack(data);
+            case sectorPort -> writeSector(data);
+            case dataPort -> writeData(data);
+            case drivePort -> writeDrive(data);
 
-            case trackPort:
-                writeTrack(data);
-                break;
-
-            case sectorPort:
-                writeSector(data);
-                break;
-
-            case dataPort:
-                writeData(data);
-                break;
-
-            case drivePort:
-                writeDrive(data);
-                break;
             //
             //            case XEBEC_CTRL:
             //                xebecController.ioWrite(address, data);
@@ -294,7 +250,8 @@ public class NascomFloppyController extends FDC17xx {
             //            case XEBEC_DATA:
             //                xebecController.ioWrite(address, data);
             //                break;
-            default:
+            default -> {
+            }
         }
     }
 
@@ -442,26 +399,15 @@ public class NascomFloppyController extends FDC17xx {
      */
     private int ioRead2(int address) {
 
-        switch (address) {
-            case statusPort:
-                return readStatus();
-
-            case trackPort:
-                return readTrack();
-
-            case sectorPort:
-                return readSector();
-
-            case dataPort:
-                return readData();
-
-            case drivePort:
-                return readDrive();
-
-            case intrqPort:
-                return readIntrq();
-        }
-        return 0;
+        return switch (address) {
+            case statusPort -> readStatus();
+            case trackPort -> readTrack();
+            case sectorPort -> readSector();
+            case dataPort -> readData();
+            case drivePort -> readDrive();
+            case intrqPort -> readIntrq();
+            default -> 0;
+        };
     }
 
     /**
@@ -649,8 +595,8 @@ public class NascomFloppyController extends FDC17xx {
      *
      */
     private void stepIn() {
-        if (track <= maxTrack) {
-            trackRegister = (track++) & 0xFF;
+        if (track < maxTrack) {
+            track = (++track) & 0xFF;
         }
         trackRegister = track;
         //
@@ -769,20 +715,12 @@ public class NascomFloppyController extends FDC17xx {
             }
         }
         if (-1 != sector) {
-            switch (selectedDisk.getSector(track, sector, side).length) {
-                default:
-                    length = 0x00;
-                    break;
-                case 256:
-                    length = 0x01;
-                    break;
-                case 512:
-                    length = 0x02;
-                    break;
-                case 1024:
-                    length = 0x03;
-                    break;
-            }
+            length = switch (selectedDisk.getSector(track, sector, side).length) {
+                default -> 0x00;
+                case 256 -> 0x01;
+                case 512 -> 0x02;
+                case 1024 -> 0x03;
+            };
             bufferPosition = 0;
             readBuffer = new int[6];
             readBuffer[0] = track;
@@ -898,32 +836,18 @@ public class NascomFloppyController extends FDC17xx {
                         } else {
                             if (0 != idByteCounter) {
                                 switch (idByteCounter--) {
-                                    case 2:
-                                        formatSector = data;
-                                        break;
-                                    case 3:
-                                        formatSide = data;
-                                        break;
-                                    case 4:
-                                        formatTrack = track;
-                                        break;
-                                    case 1:
+                                    case 2 -> formatSector = data;
+                                    case 3 -> formatSide = data;
+                                    case 4 -> formatTrack = track;
+                                    case 1 -> {
                                         switch (data) {
-                                            default:
-                                                sectorBuffer = new byte[128];
-                                                break;
-                                            case 0x01:
-                                                sectorBuffer = new byte[256];
-                                                break;
-                                            case 0x02:
-                                                sectorBuffer = new byte[512];
-                                                break;
-                                            case 0x03:
-                                                sectorBuffer = new byte[1024];
-                                                break;
+                                            default -> sectorBuffer = new byte[128];
+                                            case 0x01 -> sectorBuffer = new byte[256];
+                                            case 0x02 -> sectorBuffer = new byte[512];
+                                            case 0x03 -> sectorBuffer = new byte[1024];
                                         }
                                         formatLength = sectorBuffer.length;
-                                        break;
+                                    }
                                 }
                             }
                         }
@@ -949,41 +873,40 @@ public class NascomFloppyController extends FDC17xx {
     private void writeDrive(int data) {
         driveRegister = data;
         switch (data & 0x1F) {
-            case 0x01:
+            case 0x01 -> {
                 selectedDisk = disk0;
                 side = 0;
-                break;
-            case 0x11:
+            }
+            case 0x11 -> {
                 selectedDisk = disk0;
                 side = 1;
-                break;
-            case 0x02:
+            }
+            case 0x02 -> {
                 selectedDisk = disk1;
                 side = 0;
-                break;
-            case 0x12:
+            }
+            case 0x12 -> {
                 selectedDisk = disk1;
                 side = 1;
-                break;
+            }
             //
-            case 0x04:
+            case 0x04 -> {
                 selectedDisk = disk2;
                 side = 0;
-                break;
-            case 0x14:
+            }
+            case 0x14 -> {
                 selectedDisk = disk2;
                 side = 1;
-                break;
-            case 0x08:
+            }
+            case 0x08 -> {
                 selectedDisk = disk3;
                 side = 0;
-                break;
-            case 0x18:
+            }
+            case 0x18 -> {
                 selectedDisk = disk3;
                 side = 1;
-                break;
-            default:
-                System.out.println("Illegal drive selection");
+            }
+            default -> System.out.println("Illegal drive selection");
         }
         // which side to select
         if ((data & 0x10) == 0) {

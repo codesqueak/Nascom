@@ -25,8 +25,7 @@
 
 package com.codingrodent.emulator.emulator.display;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 
 class WindowHandler extends WindowAdapter {
 

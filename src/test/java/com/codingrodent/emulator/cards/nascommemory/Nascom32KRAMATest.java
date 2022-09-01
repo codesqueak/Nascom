@@ -1,12 +1,12 @@
 package com.codingrodent.emulator.cards.nascommemory;
 
 import com.codingrodent.emulator.cards.ram.Nascom32KRAMA;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 
 import java.util.*;
 
 import static com.codingrodent.emulator.nas80Bus.INasBus.NO_MEMORY_PRESENT;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -16,9 +16,9 @@ public class Nascom32KRAMATest {
     private Map<String, String> cardProperties;
     private Nascom32KRAMA ramA;
 
-    @Before
-    public void setUp() throws Exception {
-        cardProperties = new HashMap<String, String>();
+    @BeforeEach
+    public void setUp() {
+        cardProperties = new HashMap<>();
         cardProperties.put("StartAddress", "1000");
         cardProperties.put("Size", "32K");
         cardProperties.put("ROMEnabled", "true");
@@ -29,13 +29,9 @@ public class Nascom32KRAMATest {
         ramA = new Nascom32KRAMA();
     }
 
-    @After
-    public void tearDown() throws Exception {
-
-    }
 
     @Test
-    public void initialise() throws Exception {
+    public void initialise() {
         ramA.setCardProperties(cardProperties);
         ramA.initialise();
         //
@@ -79,12 +75,12 @@ public class Nascom32KRAMATest {
     }
 
     @Test
-    public void setNasBus() throws Exception {
+    public void setNasBus() {
 
     }
 
     @Test
-    public void memoryReadWrite() throws Exception {
+    public void memoryReadWrite() {
         ramA.setCardProperties(cardProperties);
         ramA.initialise();
         //
@@ -112,7 +108,7 @@ public class Nascom32KRAMATest {
     }
 
     @Test
-    public void noEffect() throws Exception {
+    public void noEffect() {
         ramA.reset();
         ramA.actionPerformed(null);
         ramA.ioRead(0x00);

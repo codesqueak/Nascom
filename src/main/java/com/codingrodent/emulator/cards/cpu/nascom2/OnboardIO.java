@@ -36,7 +36,7 @@ class OnboardIO implements IBaseDevice {
     private Keyboard keyboard;
     private INasBus nasBus;
     private Nascom2CPUCard cpuCard;
-    private IBaseDevice pioDevice;
+    private final IBaseDevice pioDevice;
 
     OnboardIO() {
         keyboard = null;
@@ -75,15 +75,9 @@ class OnboardIO implements IBaseDevice {
             case 0x03: {
                 return 0x00;
             }
-            case 0x04: {
-                return pioDevice.IORead(localAddress);
-            }
-            case 0x05: {
-                return pioDevice.IORead(localAddress);
-            }
-            case 0x06: {
-                return pioDevice.IORead(localAddress);
-            }
+            case 0x04:
+            case 0x05:
+            case 0x06:
             case 0x07: {
                 return pioDevice.IORead(localAddress);
             }
@@ -105,43 +99,19 @@ class OnboardIO implements IBaseDevice {
         // in (BC)
         //
         switch (localAddress) {
-            case 0x00: {
+            case 0x00 -> {
                 keyboard.IOWrite(localAddress, data);
                 cassetteTape.controlLED(data);
                 if ((data & NMIFlag) != 0) {
                     context.logDebugEvent("NMI request");
                     cpuCard.requestSingleStepNMI();
                 }
-                return;
             }
-            case 0x01: {
-                cassetteTape.writeDataToUART(data);
-                return;
+            case 0x01 -> cassetteTape.writeDataToUART(data);
+            case 0x02, 0x03 -> {
             }
-            case 0x02: {
-                return;
-            }
-            case 0x03: {
-                return;
-            }
-            case 0x04: {
-                pioDevice.IOWrite(localAddress, data);
-                return;
-            }
-            case 0x05: {
-                pioDevice.IOWrite(localAddress, data);
-                return;
-            }
-            case 0x06: {
-                pioDevice.IOWrite(localAddress, data);
-                return;
-            }
-            case 0x07: {
-                pioDevice.IOWrite(localAddress, data);
-                return;
-            }
-            default:
-                nasBus.ioWrite(address, data);
+            case 0x04, 0x05, 0x06, 0x07 -> pioDevice.IOWrite(localAddress, data);
+            default -> nasBus.ioWrite(address, data);
         }
     }
 

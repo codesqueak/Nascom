@@ -25,17 +25,11 @@
 
 package com.codingrodent.emulator.emulator;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class holds an internal representation of the machineInfo.xml document.
@@ -43,7 +37,7 @@ import java.util.List;
 class ProcessEmulatorInfoFile {
 
     private static final String EMULATOR_INFO_FILE = "EmulatorInfo.json";
-    private List<CardData> cardInfo;
+    private final List<CardData> cardInfo;
 
     /**
      * Standard constructor - Loads the machineInfo.xml document and resets
