@@ -25,9 +25,7 @@
 
 package com.codingrodent.emulator.cards.cpu.nascom2;
 
-import com.codingrodent.microprocessor.IBaseDevice;
-import com.codingrodent.microprocessor.IMemory;
-import com.codingrodent.microprocessor.ProcessorException;
+import com.codingrodent.microprocessor.*;
 import com.codingrodent.microprocessor.Z80.Z80Core;
 
 class Z80CPU extends Z80Core {
@@ -51,9 +49,9 @@ class Z80CPU extends Z80Core {
         setMHz(-1);
     }
 
-	/*
+    /*
      * Public interfaces to processor control functions
-	 */
+     */
 
     /**
      * The MHz rating of the cpu
@@ -66,7 +64,7 @@ class Z80CPU extends Z80Core {
             tStatesPerMS = 8000L; // 8MHz
         } else {
             maxSpeed = false;
-            tStatesPerMS = (long) (mhz * 1000);
+            tStatesPerMS = mhz * 1000L;
         }
         lastTime = System.nanoTime();
         resetTStates();
@@ -83,10 +81,8 @@ class Z80CPU extends Z80Core {
 
     /**
      * Execute a single instruction at the present program counter (PC) then return
-     *
-     * @throws ProcessorException Thrown if an unexpected state arises
      */
-    synchronized void execute() throws ProcessorException {
+    synchronized void execute() {
         if (nupMode) {
             if (0x1000 == getProgramCounter()) {
                 System.out.println("nup Tracking start");

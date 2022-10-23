@@ -49,7 +49,17 @@
       "Dump0_Tracks": "77",
       "Dump0_Sectors": "16",
       "Dump0_Sides": "2",
-      "Dump0_Size": "256"
+      "Dump0_Size": "256",
+      "Dump1": "resources/disk/dump/nasdos/dos-adventure.dsk",
+      "Dump1_Tracks": "77",
+      "Dump1_Sectors": "16",
+      "Dump1_Sides": "2",
+      "Dump1_Size": "256",
+      "Dump2": "resources/disk/dump/nasdos/mc-games.dsk",
+      "Dump2_Tracks": "77",
+      "Dump2_Sectors": "16",
+      "Dump2_Sides": "2",
+      "Dump2_Size": "256"
     }
   },
   {

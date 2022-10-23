@@ -28,19 +28,18 @@ package com.codingrodent.emulator.emulator;
 import com.codingrodent.emulator.cards.ICPUControl;
 import com.codingrodent.emulator.emulator.display.PrimaryDisplay;
 import com.codingrodent.emulator.nas80Bus.CardController;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import java.util.List;
 
 /**
- * Provides for a standardized system wide representation of the system preferences (systemPrefs.xml).
+ * Provides for a standardized system-wide representation of the system preferences (systemPrefs.xml).
  */
 public class SystemContext {
 
     private static final Logger logger = LogManager.getLogger(SystemContext.class);
     private static SystemContext instance;
-    private ProcessEmulatorInfoFile emulatorInfo;
+    private final ProcessEmulatorInfoFile emulatorInfo;
     private PrimaryDisplay primaryDisplay;
     private CardController cardController;
 

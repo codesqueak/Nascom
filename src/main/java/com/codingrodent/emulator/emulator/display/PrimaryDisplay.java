@@ -26,21 +26,20 @@
 package com.codingrodent.emulator.emulator.display;
 
 import javax.swing.*;
+import java.io.Serial;
 
 /*
  * convert video memory writes into bit displays
  */
 public class PrimaryDisplay extends JFrame {
 
+    @Serial
     private static final long serialVersionUID = 3832623997442863920L;
     //
     private final JMenuBar menuBar;
     private final JMenuItem loadFileRAM;
     private final JMenuItem saveFile;
-    private final JCheckBoxMenuItem MHz2;
-    private final JCheckBoxMenuItem MHz4;
-    private final JCheckBoxMenuItem MHz6;
-    private final JCheckBoxMenuItem MHzMax;
+    private final JCheckBoxMenuItem MHz2, MHz4, MHz6, MHz8, MHzMax;
     private final JMenuItem runUntil;
     private final JMenuItem singleStep;
     private final JMenuItem halt;
@@ -116,6 +115,9 @@ public class PrimaryDisplay extends JFrame {
         MHz6 = new JCheckBoxMenuItem("6 MHz");
         MHz6.addActionListener(guiListener);
         menu.add(MHz6);
+        MHz8 = new JCheckBoxMenuItem("8 MHz");
+        MHz8.addActionListener(guiListener);
+        menu.add(MHz8);
         MHz4.setState(true);
         MHzMax = new JCheckBoxMenuItem("Maximum");
         MHzMax.addActionListener(guiListener);
@@ -158,6 +160,7 @@ public class PrimaryDisplay extends JFrame {
         MHz2.setState(true);
         MHz4.setState(false);
         MHz6.setState(false);
+        MHz8.setState(false);
         MHzMax.setState(false);
     }
 
@@ -169,6 +172,7 @@ public class PrimaryDisplay extends JFrame {
         MHz2.setState(false);
         MHz4.setState(true);
         MHz6.setState(false);
+        MHz8.setState(false);
         MHzMax.setState(false);
     }
 
@@ -180,6 +184,7 @@ public class PrimaryDisplay extends JFrame {
         MHz2.setState(false);
         MHz4.setState(false);
         MHz6.setState(false);
+        MHz8.setState(false);
         MHzMax.setState(true);
     }
 
@@ -191,6 +196,19 @@ public class PrimaryDisplay extends JFrame {
         MHz2.setState(false);
         MHz4.setState(false);
         MHz6.setState(true);
+        MHz8.setState(false);
+        MHzMax.setState(false);
+    }
+
+    void set8MHz() {
+        MHz6.setEnabled(true);
+    }
+
+    void enable8MHz() {
+        MHz2.setState(false);
+        MHz4.setState(false);
+        MHz6.setState(false);
+        MHz8.setState(true);
         MHzMax.setState(false);
     }
 

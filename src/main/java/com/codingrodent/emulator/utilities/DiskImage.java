@@ -102,12 +102,12 @@ public class DiskImage {
                 int sector = headerBlock[4];
                 int count = headerBlock[6] + headerBlock[7] << 8;
 
-				/*
+                /*
                  * int lengthCode = headerBlock[5]; System.out.print("Cylinder = " + util.getByte(cylinder));
-				 * System.out.print(" Side = " + util.getByte(side)); System.out.print(" Sector = " +
-				 * util.getByte(sector)); System.out.print(" LengthCode=" + util.getByte(lengthCode));
-				 * System.out.println(" Count = " + util.getWord(count));
-				 */
+                 * System.out.print(" Side = " + util.getByte(side)); System.out.print(" Sector = " +
+                 * util.getByte(sector)); System.out.print(" LengthCode=" + util.getByte(lengthCode));
+                 * System.out.println(" Count = " + util.getWord(count));
+                 */
                 if (count < 0) {
                     count = 128;
                 }
@@ -124,7 +124,7 @@ public class DiskImage {
     }
 
     /**
-     * Read a binary dump of a double sided disk in .dmp format side...track...sector
+     * Read a binary dump of a double-sided disk in .dmp format side...track...sector
      *
      * @param file       Dump file to read
      * @param tracks     Tracks to read
@@ -377,14 +377,13 @@ public class DiskImage {
                     }
                 }
             }
-            fos.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * Dump two images to a file (double sided disk)
+     * Dump two images to a file (double-sided disk)
      *
      * @param diskImage0 Side 0
      * @param diskImage1 Side 1
@@ -403,7 +402,6 @@ public class DiskImage {
                     fos.write(diskImage1[track][sector], 0, diskImage1[0][0].length);
                 }
             }
-            fos.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

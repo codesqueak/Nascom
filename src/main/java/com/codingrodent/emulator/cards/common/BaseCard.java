@@ -98,7 +98,7 @@ public abstract class BaseCard implements ICard, INasBus {
     }
 
     /**
-     * Get a human readable name for the card
+     * Get a human-readable name for the card
      *
      * @return Card name string
      */
@@ -108,7 +108,7 @@ public abstract class BaseCard implements ICard, INasBus {
     }
 
     /**
-     * Set a human readable name for the card
+     * Set a human-readable name for the card
      *
      * @param cardName Card name string
      */

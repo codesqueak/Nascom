@@ -1,5 +1,3 @@
-import com.github.spotbugs.SpotBugsTask
-
 buildscript {
     repositories {
         mavenCentral()
@@ -9,19 +7,22 @@ buildscript {
             url "https://plugins.gradle.org/m2/"
         }
     }
-    dependencies {
-        classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:1.6.6"
-    }
+}
+
+plugins {
+    id "com.github.spotbugs" version "5.0.10"
 }
 
 apply plugin: 'idea'
 apply plugin: 'java'
 apply plugin: 'jacoco'
-apply plugin: 'maven'
 apply plugin: 'com.github.spotbugs'
 
-sourceCompatibility = javaVersion
-targetCompatibility = javaVersion
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
 
 task setVersion {
     if (System.env.BUILD_NUMBER) {
@@ -31,12 +32,8 @@ task setVersion {
     }
 }
 
-compileJava {
-    options.fork = true
-    options.incremental = false
-}
-
 jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest
             {
                 attributes 'Implementation-Title': projectName,
@@ -46,9 +43,7 @@ jar {
                         'Built-JDK': System.getProperty('java.version')
             }
     from {
-        configurations.compile.collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
     baseName = projectName
 }
@@ -81,43 +76,49 @@ repositories {
 }
 
 jacoco {
-    toolVersion = "0.8.2"
+    toolVersion = "0.8.8"
     reportsDir = file("$buildDir/customJacocoReportDir")
 }
 
-test
-        {
-            maxParallelForks = 1
-            filter
-                    {
-                        includeTestsMatching "com.codingrodent.emulator.*"
-                    }
-            jacoco {
-                append = false
-                destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
-                classDumpDir = file("$buildDir/jacoco/classpathdumps")
+test {
+    useJUnitPlatform()
+    maxParallelForks = 1
+    filter
+            {
+                includeTestsMatching "com.codingrodent.emulator.*"
             }
-        }
+    jacoco {
+        destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+        classDumpDir = file("$buildDir/jacoco/classpathdumps")
+    }
+}
 
 jacocoTestReport {
     reports {
-        xml.setEnabled(true)
-        csv.setEnabled(false)
-        html.setDestination(file("${buildDir}/jacocoHtml"))
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir("${buildDir}/jacocoHtml")
     }
 }
 
 spotbugs {
-    sourceSets = [sourceSets.main]
     effort = "max"
     reportLevel = "high"
     ignoreFailures = true
+    toolVersion = '4.7.1'
 }
 
-tasks.withType(SpotBugsTask) {
+spotbugsMain {
     reports {
-        xml.enabled = true
-        html.enabled = false
+        xml.enabled = false
+        html.enabled = true
+    }
+}
+
+spotbugsTest {
+    reports {
+        xml.enabled = false
+        html.enabled = true
     }
 }
 
@@ -126,16 +127,17 @@ test.dependsOn javadoc
 compileJava.dependsOn setVersion
 
 dependencies {
-    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.1'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.1'
-    compile group: 'com.codingrodent.microprocessor', name: 'Z80Processor', version: '2.0.2'
-    compile group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.12.4'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.12.4'
+    implementation group: 'com.codingrodent.microprocessor', name: 'Z80Processor', version: '4.2.0'
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.1'
     //
-    testCompile("junit:junit:4.12")
-    testCompile("org.mockito:mockito-all:2.0.2-beta")
-    testCompile("org.hamcrest:hamcrest-all:1.3")
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.9.1'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.9.1'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '4.8.1'
+    testImplementation group: 'org.hamcrest', name: 'hamcrest', version: '2.2'
 }
 
 wrapper {
-    gradleVersion = '5.0'
+    gradleVersion = '7.5.1'
 }

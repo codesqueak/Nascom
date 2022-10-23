@@ -25,16 +25,11 @@
 
 package com.codingrodent.emulator.cards.cpu.nascom2;
 
-import com.codingrodent.emulator.cards.ICPUControl;
-import com.codingrodent.emulator.cards.ICard;
+import com.codingrodent.emulator.cards.*;
 import com.codingrodent.emulator.emulator.SystemContext;
 import com.codingrodent.emulator.nas80Bus.INasBus;
-import com.codingrodent.emulator.utilities.FileHandler;
-import com.codingrodent.emulator.utilities.MemoryChunk;
-import com.codingrodent.emulator.utilities.Utilities;
-import com.codingrodent.microprocessor.IBaseDevice;
-import com.codingrodent.microprocessor.IMemory;
-import com.codingrodent.microprocessor.ProcessorException;
+import com.codingrodent.emulator.utilities.*;
+import com.codingrodent.microprocessor.*;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -45,7 +40,7 @@ public class Nascom2CPUCard implements ICard, ICPUControl, INasBus {
     private final static String TAPE = "Tape";
     private final static String LOAD_TAPE = "Load Tape";
     private final static String SAVE_TAPE = "Save Tape";
-    private final static String STOP_LOADING  = "Stop Loading Tape";
+    private final static String STOP_LOADING = "Stop Loading Tape";
     private final static String STOP_SAVING = "Stop Saving Tape";
     private final IMemory memory;
     private final IBaseDevice ioDevices;
@@ -88,7 +83,7 @@ public class Nascom2CPUCard implements ICard, ICPUControl, INasBus {
         JMenuItem saveMenuItem = new JMenuItem(SAVE_TAPE);
         menu.add(saveMenuItem);
         saveMenuItem.addActionListener(this);
-	JMenuItem stopSaveMenuItem = new JMenuItem(STOP_SAVING);
+        JMenuItem stopSaveMenuItem = new JMenuItem(STOP_SAVING);
         menu.add(stopSaveMenuItem);
         stopSaveMenuItem.addActionListener(this);
     }
@@ -174,7 +169,7 @@ public class Nascom2CPUCard implements ICard, ICPUControl, INasBus {
     }
 
     /**
-     * Get a human readable name for the card
+     * Get a human-readable name for the card
      *
      * @return Card name string
      */
@@ -184,7 +179,7 @@ public class Nascom2CPUCard implements ICard, ICPUControl, INasBus {
     }
 
     /**
-     * Set a human readable name for the card
+     * Set a human-readable name for the card
      *
      * @param cardName Card name string
      */
@@ -245,12 +240,12 @@ public class Nascom2CPUCard implements ICard, ICPUControl, INasBus {
             System.out.println("-- Save --");
             ((OnboardIO) ioDevices).saveNewTape();
         } else if (STOP_LOADING.equals(menuCommand)) {
-	    System.out.println("-- Stop loading --");
-	    ((OnboardIO) ioDevices).stopLoading();
-	} else if (STOP_SAVING.equals(menuCommand)) {
-	    System.out.println("-- Stop saving --");
-	    ((OnboardIO) ioDevices).stopSaving();
-	}
+            System.out.println("-- Stop loading --");
+            ((OnboardIO) ioDevices).stopLoading();
+        } else if (STOP_SAVING.equals(menuCommand)) {
+            System.out.println("-- Stop saving --");
+            ((OnboardIO) ioDevices).stopSaving();
+        }
     }
 
     /**
@@ -270,22 +265,19 @@ public class Nascom2CPUCard implements ICard, ICPUControl, INasBus {
         processor.setResetAddress(startAddress);
         processor.setMHz(4);
         processor.setNUPMode(nupMode);
-        try {
-            while (true) {
-                if (run) {
-                    processNascomNMI();
-                    processor.execute();
-                } else {
-                    try {
-                        Thread.sleep(250);
-                    } catch (InterruptedException ex1) {
-                        systemContext.logErrorEvent("Sleep in main execution thread interrupted - weird!");
-                    }
+        while (true) {
+            if (run) {
+                processNascomNMI();
+                processor.execute();
+            } else {
+                try {
+                    Thread.sleep(250);
+                } catch (InterruptedException ex1) {
+                    systemContext.logErrorEvent("Sleep in main execution thread interrupted - weird!");
                 }
             }
-        } catch (ProcessorException ex) {
-            ex.printStackTrace();
         }
+
     }
 
     /**

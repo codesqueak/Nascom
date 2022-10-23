@@ -26,9 +26,11 @@
 package com.codingrodent.emulator.cards.video;
 
 import javax.swing.*;
+import java.io.Serial;
 
 class AVCFrame extends JFrame {
 
+    @Serial
     private static final long serialVersionUID = 3257005466734178354L;
 
     AVCFrame(String title) {

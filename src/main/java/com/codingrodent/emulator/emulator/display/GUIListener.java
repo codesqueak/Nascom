@@ -25,14 +25,10 @@
 
 package com.codingrodent.emulator.emulator.display;
 
-import com.codingrodent.emulator.emulator.CardData;
-import com.codingrodent.emulator.emulator.SystemContext;
+import com.codingrodent.emulator.emulator.*;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.io.File;
 import java.util.List;
 
@@ -112,52 +108,57 @@ class GUIListener implements ActionListener, ItemListener {
                                 context.getCPUCard().setSpeedMHz(6);
                                 screenFrame.enable6MHz();
                             } else {
-                                if ("Maximum".equals(menuCommand)) {
-                                    context.getCPUCard().setSpeedMHz(-1);
-                                    screenFrame.enableMHzMax();
+                                if ("8 MHz".equals(menuCommand)) {
+                                    context.getCPUCard().setSpeedMHz(8);
+                                    screenFrame.enable8MHz();
                                 } else {
-                                    if ("Reset".equals(menuCommand)) {
-                                        context.getCardController().getCard(0).reset();
+                                    if ("Maximum".equals(menuCommand)) {
+                                        context.getCPUCard().setSpeedMHz(-1);
+                                        screenFrame.enableMHzMax();
                                     } else {
-                                        if ("NMI".equals(menuCommand)) {
-                                            context.getCPUCard().toggleNMI();
+                                        if ("Reset".equals(menuCommand)) {
+                                            context.getCardController().getCard(0).reset();
                                         } else {
-                                            if ("Exit".equals(menuCommand)) {
-                                                System.exit(0);
+                                            if ("NMI".equals(menuCommand)) {
+                                                context.getCPUCard().toggleNMI();
                                             } else {
-                                                if ("Load File (RAM)".equals(menuCommand)) {
-                                                    JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
-                                                    fc.setFileFilter(new nasFileFilter());
-                                                    int returnValue = fc.showOpenDialog(frame);
-                                                    if (returnValue == JFileChooser.APPROVE_OPTION) {
-                                                        File file = fc.getSelectedFile();
-                                                        String fileName = file.getAbsolutePath();
-                                                        context.logDebugEvent("Processing file : " + fileName);
-                                                        context.getCardController().loadProgram(fileName);
-                                                    }
+                                                if ("Exit".equals(menuCommand)) {
+                                                    System.exit(0);
                                                 } else {
-                                                    if ("Save Memory Image".equals(menuCommand)) {
+                                                    if ("Load File (RAM)".equals(menuCommand)) {
                                                         JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
                                                         fc.setFileFilter(new nasFileFilter());
-                                                        int returnValue = fc.showSaveDialog(frame);
+                                                        int returnValue = fc.showOpenDialog(frame);
                                                         if (returnValue == JFileChooser.APPROVE_OPTION) {
                                                             File file = fc.getSelectedFile();
                                                             String fileName = file.getAbsolutePath();
                                                             context.logDebugEvent("Processing file : " + fileName);
-                                                            context.getCardController().dumpMemory(fileName, frame);
+                                                            context.getCardController().loadProgram(fileName);
                                                         }
                                                     } else {
-                                                        if ("Information".equals(menuCommand)) {
-                                                            JOptionPane.showMessageDialog(frame, "80-BUS Modular Emulator\n\n", "Information...", JOptionPane.INFORMATION_MESSAGE, null);
+                                                        if ("Save Memory Image".equals(menuCommand)) {
+                                                            JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+                                                            fc.setFileFilter(new nasFileFilter());
+                                                            int returnValue = fc.showSaveDialog(frame);
+                                                            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                                                                File file = fc.getSelectedFile();
+                                                                String fileName = file.getAbsolutePath();
+                                                                context.logDebugEvent("Processing file : " + fileName);
+                                                                context.getCardController().dumpMemory(fileName, frame);
+                                                            }
                                                         } else {
-                                                            if ("About".equals(menuCommand)) {
-                                                                StringBuilder aboutString = new StringBuilder("Cards loaded:\n\n");
-                                                                List<CardData> cards = context.getAllCards();
-                                                                for (CardData card : cards) {
-                                                                    aboutString.append(card.getDetails()).append('\n');
+                                                            if ("Information".equals(menuCommand)) {
+                                                                JOptionPane.showMessageDialog(frame, "80-BUS Modular Emulator\n\n", "Information...", JOptionPane.INFORMATION_MESSAGE, null);
+                                                            } else {
+                                                                if ("About".equals(menuCommand)) {
+                                                                    StringBuilder aboutString = new StringBuilder("Cards loaded:\n\n");
+                                                                    List<CardData> cards = context.getAllCards();
+                                                                    for (CardData card : cards) {
+                                                                        aboutString.append(card.getDetails()).append('\n');
+                                                                    }
+                                                                    aboutString.append("\nShare and enjoy....\n\n");
+                                                                    JOptionPane.showMessageDialog(frame, aboutString.toString(), "About...", JOptionPane.INFORMATION_MESSAGE, null);
                                                                 }
-                                                                aboutString.append("\nShare and enjoy....\n\n");
-                                                                JOptionPane.showMessageDialog(frame, aboutString.toString(), "About...", JOptionPane.INFORMATION_MESSAGE, null);
                                                             }
                                                         }
                                                     }
@@ -172,9 +173,6 @@ class GUIListener implements ActionListener, ItemListener {
                 }
             }
         }
-
-        //System.out.println( e.paramString() );
-        //System.out.println( e.getActionCommand() );
     }
 
     @Override

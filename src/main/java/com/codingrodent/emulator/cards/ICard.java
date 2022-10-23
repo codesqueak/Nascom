@@ -77,14 +77,14 @@ public interface ICard extends ActionListener {
     boolean isOutputPort(int address);
 
     /**
-     * Get a human readable name for the card
+     * Get a human-readable name for the card
      *
      * @return Card name string
      */
     String getCardName();
 
     /**
-     * Set a human readable name for the card
+     * Set a human-readable name for the card
      *
      * @param cardName The card name string
      */

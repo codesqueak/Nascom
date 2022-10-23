@@ -24,26 +24,17 @@
  */
 package com.codingrodent.emulator.utilities;
 
-import org.junit.*;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
  */
 public class MemoryChunkTest {
-    @Before
-    public void setUp() throws Exception {
-
-    }
-
-    @After
-    public void tearDown() throws Exception {
-
-    }
 
     @Test
-    public void getMemoryChunk() throws Exception {
+    public void getMemoryChunk() {
         MemoryChunk mc = new MemoryChunk();
         assertEquals(0, mc.getBase());
         assertEquals(0, mc.getSize());
@@ -51,7 +42,7 @@ public class MemoryChunkTest {
     }
 
     @Test
-    public void writeByte() throws Exception {
+    public void writeByte() {
         MemoryChunk mc = new MemoryChunk();
         mc.setBase(0x2000);
         int data = 0x00;
@@ -70,8 +61,8 @@ public class MemoryChunkTest {
         short[] chunk = mc.getMemoryChunk();
         assertEquals(0x1000, chunk.length);
         data = 0x00;
-        for (int address = 0; address < chunk.length; address++) {
-            assertEquals(chunk[address], data++);
+        for (short i : chunk) {
+            assertEquals(i, data++);
             data = data & 0x00FF;
         }
     }

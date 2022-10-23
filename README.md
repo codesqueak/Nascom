@@ -12,24 +12,18 @@ gradlew clean build test
 (Linux)
 ./gradlew clean build test
 
-
-## Using Jenkins
-
-The project includes a Jenkins file to control a pipeline build.  
-At present the available version of the Jacoco plugin (2.0.1 at time of writing) does not support a 'publisher'.  The build was tested using a hand built plugin from the master branch of the  [project](https://github.com/jenkinsci/jacoco-plugin)
-
 ### Instructions
 
-1. Clone the project fro github
+1. Clone the project from github
 2. Find required ROM's (See configuration below)
 3. run gradlew clean build / ./gradlew clean build
 5. run gradlew makedist / ./gradlew makedist
 6. Move to the /dest directory
 7. Configure ROM's into EmulatorInfo.json
-8. run java -jar NascomEmulator-0.1.0.jar
+8. run java -jar NascomEmulator-0.3.0.jar
 9. Enjoy that 4MHz goodness !
 
-###Configuration:
+### Configuration:
 
 The emulator works by emulating the 80-BUS,  not any specific computer built on this bus. By use of
 configuration files, any 80-BUS based system can be constructed.  This is done by supplying a class file

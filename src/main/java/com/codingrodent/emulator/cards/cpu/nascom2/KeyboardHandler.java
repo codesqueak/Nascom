@@ -25,10 +25,8 @@
 
 package com.codingrodent.emulator.cards.cpu.nascom2;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
+import java.awt.event.*;
+import java.util.Arrays;
 
 class KeyboardHandler implements KeyListener, WindowFocusListener {
 
@@ -64,9 +62,7 @@ class KeyboardHandler implements KeyListener, WindowFocusListener {
      */
     @Override
     public void windowLostFocus(WindowEvent e) {
-        for (int i = 0; i < buffer.length; i++) {
-            buffer[i] = 0x00FF;
-        }
+        Arrays.fill(buffer, 0x00FF);
         keyboard.setKeyStroke(buffer);
         shiftEnabled = false;
         ctrlEnabled = false;
@@ -81,15 +77,12 @@ class KeyboardHandler implements KeyListener, WindowFocusListener {
     }
 
     /*
-     * send the key stroke to the keyboard device
+     * send the keystroke to the keyboard device
      */
     @Override
     public void keyPressed(KeyEvent e) {
         synchronized (buffer) {
             timeKeyPressed = System.nanoTime() / 1000000;
-//            System.out.println("Pressed " + e.getKeyChar());
-//            System.out.println("Key pressed was : [" + e.getKeyCode() + "]["
-//                    + (int) e.getKeyChar() + "][" + e.getKeyChar() + "]");
             //
             int keyCode = e.getKeyCode();
             //
@@ -108,245 +101,128 @@ class KeyboardHandler implements KeyListener, WindowFocusListener {
             if (shiftEnabled) {
 
                 switch (keyCode) {
-                    case KeyEvent.VK_6:
-                        keyCode = KeyEvent.VK_0;
-                        break;
-                    case KeyEvent.VK_7:
-                        keyCode = KeyEvent.VK_6;
-                        break;
-                    case KeyEvent.VK_8:
-                        keyCode = KeyEvent.VK_COLON;
-                        break;
-                    case KeyEvent.VK_9:
-                        keyCode = KeyEvent.VK_8;
-                        break;
-                    case KeyEvent.VK_0:
-                        keyCode = KeyEvent.VK_9;
-                        break;
-                    case KeyEvent.VK_MINUS:
-                        keyCode = KeyEvent.VK_CLOSE_BRACKET;
-                        break;
-                    case KeyEvent.VK_SEMICOLON:
+                    case KeyEvent.VK_6 -> keyCode = KeyEvent.VK_0;
+                    case KeyEvent.VK_7 -> keyCode = KeyEvent.VK_6;
+                    case KeyEvent.VK_8 -> keyCode = KeyEvent.VK_COLON;
+                    case KeyEvent.VK_9 -> keyCode = KeyEvent.VK_8;
+                    case KeyEvent.VK_0 -> keyCode = KeyEvent.VK_9;
+                    case KeyEvent.VK_MINUS -> keyCode = KeyEvent.VK_CLOSE_BRACKET;
+                    case KeyEvent.VK_SEMICOLON -> {
                         keyCode = KeyEvent.VK_COLON;
                         setSHIFT();
-                        break;
-                    case KeyEvent.VK_EQUALS:
+                    }
+                    case KeyEvent.VK_EQUALS -> {
                         keyCode = KeyEvent.VK_SEMICOLON;
                         resetSHIFT();
-                        break;
-                    case KeyEvent.VK_QUOTE:
+                    }
+                    case KeyEvent.VK_QUOTE -> {
                         keyCode = KeyEvent.VK_AT;
                         resetSHIFT();
-                        break;
-                    case KeyEvent.VK_OPEN_BRACKET:
-                        keyCode = KeyEvent.VK_BRACELEFT;
-                        break;
-                    case KeyEvent.VK_CLOSE_BRACKET:
-                        keyCode = KeyEvent.VK_BRACERIGHT;
-                        break;
-                    default:
+                    }
+                    case KeyEvent.VK_OPEN_BRACKET -> keyCode = KeyEvent.VK_BRACELEFT;
+                    case KeyEvent.VK_CLOSE_BRACKET -> keyCode = KeyEvent.VK_BRACERIGHT;
+                    default -> {
+                    }
                 }
             }
 
             //
             switch (keyCode) {
                 // Control keys
-                case KeyEvent.VK_ALT_GRAPH:
-                    resetBit(5, 6);
-                    break;
-                case KeyEvent.VK_CONTROL:
-                    resetCTRL();
-                    break;
-                case KeyEvent.VK_LEFT:
-                    resetBit(2, 6);
-                    break;
-                case KeyEvent.VK_UP:
-                    resetBit(1, 6);
-                    break;
-                case KeyEvent.VK_SPACE:
-                    resetBit(7, 4);
-                    break;
-                case KeyEvent.VK_DOWN:
-                    resetBit(3, 6);
-                    break;
-                case KeyEvent.VK_RIGHT:
-                    resetBit(4, 6);
-                    break;
-                case KeyEvent.VK_ENTER:
-                    resetBit(0, 1);
-                    break;
+                case KeyEvent.VK_ALT_GRAPH -> resetBit(5, 6);
+                case KeyEvent.VK_CONTROL -> resetCTRL();
+                case KeyEvent.VK_LEFT -> resetBit(2, 6);
+                case KeyEvent.VK_UP -> resetBit(1, 6);
+                case KeyEvent.VK_SPACE -> resetBit(7, 4);
+                case KeyEvent.VK_DOWN -> resetBit(3, 6);
+                case KeyEvent.VK_RIGHT -> resetBit(4, 6);
+                case KeyEvent.VK_ENTER -> resetBit(0, 1);
+
                 // case KeyEvent.VK_LF : { break; }
-                case KeyEvent.VK_BACK_SPACE:
-                    resetBit(0, 0);
-                    break;
+                case KeyEvent.VK_BACK_SPACE -> resetBit(0, 0);
+
                 //
                 // Other keys
-                case KeyEvent.VK_COMMA: // ,
-                    resetBit(4, 1);
-                    break;
-                case KeyEvent.VK_PERIOD: // .
-                    resetBit(5, 1);
-                    break;
-                case KeyEvent.VK_SLASH:
-                    resetBit(6, 1);
-                    break;
-                case KeyEvent.VK_SEMICOLON:
-                    resetBit(5, 0);
-                    break;
-                case KeyEvent.VK_COLON:
-                    resetBit(6, 0);
-                    break;
-                case KeyEvent.VK_QUOTE: // @
+                case KeyEvent.VK_COMMA -> // ,
+                        resetBit(4, 1);
+                case KeyEvent.VK_PERIOD -> // .
+                        resetBit(5, 1);
+                case KeyEvent.VK_SLASH -> resetBit(6, 1);
+                case KeyEvent.VK_SEMICOLON -> resetBit(5, 0);
+                case KeyEvent.VK_COLON -> resetBit(6, 0);
+                case KeyEvent.VK_QUOTE -> { // @
                     resetSHIFT();
                     resetBit(3, 2);
-                    break;
-                case KeyEvent.VK_MINUS:
-                    resetBit(0, 2);
-                    break;
-                case KeyEvent.VK_EQUALS:
+                }
+                case KeyEvent.VK_MINUS -> resetBit(0, 2);
+                case KeyEvent.VK_EQUALS -> {
                     resetSHIFT();
                     resetBit(0, 2);
-                    break;
-                case KeyEvent.VK_OPEN_BRACKET:
-                    resetBit(6, 6);
-                    break;
-                case KeyEvent.VK_CLOSE_BRACKET:
-                    resetBit(7, 6);
-                    break;
-                case KeyEvent.VK_BACK_SLASH:
+                }
+                case KeyEvent.VK_OPEN_BRACKET -> resetBit(6, 6);
+                case KeyEvent.VK_CLOSE_BRACKET -> resetBit(7, 6);
+                case KeyEvent.VK_BACK_SLASH -> {
                     resetSHIFT(); // \
                     resetBit(6, 6);
-                    break;
-                case KeyEvent.VK_AT:
-                    resetBit(0, 5);
-                    break;
-                case KeyEvent.VK_BRACELEFT:
+                }
+                case KeyEvent.VK_AT -> resetBit(0, 5);
+                case KeyEvent.VK_BRACELEFT -> {
                     resetCTRL();
                     setSHIFT();
                     resetBit(5, 0);
-                    break;
-                case KeyEvent.VK_BRACERIGHT:
+                }
+                case KeyEvent.VK_BRACERIGHT -> {
                     resetCTRL();
                     resetSHIFT();
                     resetBit(0, 2);
-                    break;
+                }
 
                 // A..Z
-                case KeyEvent.VK_A:
-                    resetBit(4, 4);
-                    break;
-                case KeyEvent.VK_B:
-                    resetBit(1, 1);
-                    break;
-                case KeyEvent.VK_C:
-                    resetBit(7, 3);
-                    break;
-                case KeyEvent.VK_D:
-                    resetBit(2, 3);
-                    break;
-                case KeyEvent.VK_E:
-                    resetBit(3, 3);
-                    break;
-                case KeyEvent.VK_F:
-                    resetBit(1, 3);
-                    break;
-                case KeyEvent.VK_G:
-                    resetBit(7, 0);
-                    break;
-                case KeyEvent.VK_H:
-                    resetBit(1, 0);
-                    break;
-                case KeyEvent.VK_I:
-                    resetBit(4, 5);
-                    break;
-                case KeyEvent.VK_J:
-                    resetBit(2, 0);
-                    break;
-                case KeyEvent.VK_K:
-                    resetBit(3, 0);
-                    break;
-                case KeyEvent.VK_L:
-                    resetBit(4, 0);
-                    break;
-                case KeyEvent.VK_M:
-                    resetBit(3, 1);
-                    break;
-                case KeyEvent.VK_N:
-                    resetBit(2, 1);
-                    break;
-                case KeyEvent.VK_O:
-                    resetBit(5, 5);
-                    break;
-                case KeyEvent.VK_P:
-                    resetBit(6, 5);
-                    break;
-                case KeyEvent.VK_Q:
-                    resetBit(5, 4);
-                    break;
-                case KeyEvent.VK_R:
-                    resetBit(7, 5);
-                    break;
-                case KeyEvent.VK_S:
-                    resetBit(3, 4);
-                    break;
-                case KeyEvent.VK_T:
-                    resetBit(1, 5);
-                    break;
-                case KeyEvent.VK_U:
-                    resetBit(3, 5);
-                    break;
-                case KeyEvent.VK_V:
-                    resetBit(7, 1);
-                    break;
-                case KeyEvent.VK_W:
-                    resetBit(4, 3);
-                    break;
-                case KeyEvent.VK_X:
-                    resetBit(1, 4);
-                    break;
-                case KeyEvent.VK_Y:
-                    resetBit(2, 5);
-                    break;
-                case KeyEvent.VK_Z:
-                    resetBit(2, 4);
-                    break;
+                case KeyEvent.VK_A -> resetBit(4, 4);
+                case KeyEvent.VK_B -> resetBit(1, 1);
+                case KeyEvent.VK_C -> resetBit(7, 3);
+                case KeyEvent.VK_D -> resetBit(2, 3);
+                case KeyEvent.VK_E -> resetBit(3, 3);
+                case KeyEvent.VK_F -> resetBit(1, 3);
+                case KeyEvent.VK_G -> resetBit(7, 0);
+                case KeyEvent.VK_H -> resetBit(1, 0);
+                case KeyEvent.VK_I -> resetBit(4, 5);
+                case KeyEvent.VK_J -> resetBit(2, 0);
+                case KeyEvent.VK_K -> resetBit(3, 0);
+                case KeyEvent.VK_L -> resetBit(4, 0);
+                case KeyEvent.VK_M -> resetBit(3, 1);
+                case KeyEvent.VK_N -> resetBit(2, 1);
+                case KeyEvent.VK_O -> resetBit(5, 5);
+                case KeyEvent.VK_P -> resetBit(6, 5);
+                case KeyEvent.VK_Q -> resetBit(5, 4);
+                case KeyEvent.VK_R -> resetBit(7, 5);
+                case KeyEvent.VK_S -> resetBit(3, 4);
+                case KeyEvent.VK_T -> resetBit(1, 5);
+                case KeyEvent.VK_U -> resetBit(3, 5);
+                case KeyEvent.VK_V -> resetBit(7, 1);
+                case KeyEvent.VK_W -> resetBit(4, 3);
+                case KeyEvent.VK_X -> resetBit(1, 4);
+                case KeyEvent.VK_Y -> resetBit(2, 5);
+                case KeyEvent.VK_Z -> resetBit(2, 4);
+
                 //
-                case KeyEvent.VK_0:
-                    resetBit(6, 2);
-                    break;
-                case KeyEvent.VK_1:
-                    resetBit(6, 4);
-                    break;
-                case KeyEvent.VK_2:
-                    resetBit(6, 3);
-                    break;
-                case KeyEvent.VK_3:
-                    resetBit(5, 3);
-                    break;
-                case KeyEvent.VK_4:
-                    resetBit(7, 2);
-                    break;
-                case KeyEvent.VK_5:
-                    resetBit(1, 2);
-                    break;
-                case KeyEvent.VK_6:
-                    resetBit(2, 2);
-                    break;
-                case KeyEvent.VK_7:
-                    resetBit(3, 2);
-                    break;
-                case KeyEvent.VK_8:
-                    resetBit(4, 2);
-                    break;
-                case KeyEvent.VK_9:
-                    resetBit(5, 2);
-                    break;
+                case KeyEvent.VK_0 -> resetBit(6, 2);
+                case KeyEvent.VK_1 -> resetBit(6, 4);
+                case KeyEvent.VK_2 -> resetBit(6, 3);
+                case KeyEvent.VK_3 -> resetBit(5, 3);
+                case KeyEvent.VK_4 -> resetBit(7, 2);
+                case KeyEvent.VK_5 -> resetBit(1, 2);
+                case KeyEvent.VK_6 -> resetBit(2, 2);
+                case KeyEvent.VK_7 -> resetBit(3, 2);
+                case KeyEvent.VK_8 -> resetBit(4, 2);
+                case KeyEvent.VK_9 -> resetBit(5, 2);
+
 
                 // Special non-standard keys
-                case KeyEvent.VK_ESCAPE:
+                case KeyEvent.VK_ESCAPE -> {
                     resetBit(0, 1);
                     resetSHIFT();
-                    break;
+                }
             }
             keyboard.setKeyStroke(buffer);
         }
@@ -375,7 +251,7 @@ class KeyboardHandler implements KeyListener, WindowFocusListener {
     public void keyReleased(KeyEvent e) {
         synchronized (buffer) {
             // Put a delay in the keyboard routine so that key presses are not
-            // eaten by the debounce s/w
+            // eaten by the de-bounce s/w
             long time = (System.nanoTime() / 1000000) - timeKeyPressed;
             if (time < 25) {
                 try {
@@ -390,9 +266,7 @@ class KeyboardHandler implements KeyListener, WindowFocusListener {
             // Check for control keys, shift, ctrl and alt-graph
             if (KeyEvent.VK_SHIFT == keyCode) {
                 shiftEnabled = false;
-                for (int i = 0; i < buffer.length; i++) {
-                    buffer[i] = 0xFF;
-                }
+                Arrays.fill(buffer, 0xFF);
             }
             if (KeyEvent.VK_CONTROL == keyCode) {
                 ctrlEnabled = false;
@@ -403,242 +277,120 @@ class KeyboardHandler implements KeyListener, WindowFocusListener {
             //
             if (shiftEnabled) {
                 switch (keyCode) {
-                    case KeyEvent.VK_6:
-                        keyCode = KeyEvent.VK_0;
-                        break;
-                    case KeyEvent.VK_7:
-                        keyCode = KeyEvent.VK_6;
-                        break;
-                    case KeyEvent.VK_8:
-                        keyCode = KeyEvent.VK_COLON;
-                        break;
-                    case KeyEvent.VK_9:
-                        keyCode = KeyEvent.VK_8;
-                        break;
-                    case KeyEvent.VK_0:
-                        keyCode = KeyEvent.VK_9;
-                        break;
-                    case KeyEvent.VK_MINUS:
-                        keyCode = KeyEvent.VK_CLOSE_BRACKET;
-                        break;
-                    case KeyEvent.VK_SEMICOLON:
-                        keyCode = KeyEvent.VK_COLON;
-                        break;
-                    case KeyEvent.VK_EQUALS:
-                        keyCode = KeyEvent.VK_SEMICOLON;
-                        break;
-                    case KeyEvent.VK_QUOTE:
-                        keyCode = KeyEvent.VK_AT;
-                        break;
-                    case KeyEvent.VK_OPEN_BRACKET:
-                        keyCode = KeyEvent.VK_BRACELEFT;
-                        break;
-                    case KeyEvent.VK_CLOSE_BRACKET:
-                        keyCode = KeyEvent.VK_BRACERIGHT;
-                        break;
-                    default:
+                    case KeyEvent.VK_6 -> keyCode = KeyEvent.VK_0;
+                    case KeyEvent.VK_7 -> keyCode = KeyEvent.VK_6;
+                    case KeyEvent.VK_8, KeyEvent.VK_SEMICOLON -> keyCode = KeyEvent.VK_COLON;
+                    case KeyEvent.VK_9 -> keyCode = KeyEvent.VK_8;
+                    case KeyEvent.VK_0 -> keyCode = KeyEvent.VK_9;
+                    case KeyEvent.VK_MINUS -> keyCode = KeyEvent.VK_CLOSE_BRACKET;
+                    case KeyEvent.VK_EQUALS -> keyCode = KeyEvent.VK_SEMICOLON;
+                    case KeyEvent.VK_QUOTE -> keyCode = KeyEvent.VK_AT;
+                    case KeyEvent.VK_OPEN_BRACKET -> keyCode = KeyEvent.VK_BRACELEFT;
+                    case KeyEvent.VK_CLOSE_BRACKET -> keyCode = KeyEvent.VK_BRACERIGHT;
+                    default -> {
+                    }
                 }
             }
 
             //
             switch (keyCode) {
                 // Control keys
-                case KeyEvent.VK_ALT_GRAPH:
-                    setBit(5, 6);
-                    break;
-                case KeyEvent.VK_CONTROL:
-                    setCTRL();
-                    break;
-                case KeyEvent.VK_LEFT:
-                    setBit(2, 6);
-                    break;
-                case KeyEvent.VK_UP:
-                    setBit(1, 6);
-                    break;
-                case KeyEvent.VK_SPACE:
-                    setBit(7, 4);
-                    break;
-                case KeyEvent.VK_DOWN:
-                    setBit(3, 6);
-                    break;
-                case KeyEvent.VK_RIGHT:
-                    setBit(4, 6);
-                    break;
-                case KeyEvent.VK_ENTER:
-                    setBit(0, 1);
-                    break;
+                case KeyEvent.VK_ALT_GRAPH -> setBit(5, 6);
+                case KeyEvent.VK_CONTROL -> setCTRL();
+                case KeyEvent.VK_LEFT -> setBit(2, 6);
+                case KeyEvent.VK_UP -> setBit(1, 6);
+                case KeyEvent.VK_SPACE -> setBit(7, 4);
+                case KeyEvent.VK_DOWN -> setBit(3, 6);
+                case KeyEvent.VK_RIGHT -> setBit(4, 6);
+                case KeyEvent.VK_ENTER -> setBit(0, 1);
+
                 // case KeyEvent.VK_LF : { break; }
-                case KeyEvent.VK_BACK_SPACE:
-                    setBit(0, 0);
-                    break;
+                case KeyEvent.VK_BACK_SPACE -> setBit(0, 0);
+
                 //
                 // Other keys
-                case KeyEvent.VK_COMMA: // ,
-                    setBit(4, 1);
-                    break;
-                case KeyEvent.VK_PERIOD: // .
-                    setBit(5, 1);
-                    break;
-                case KeyEvent.VK_SLASH:
-                    setBit(6, 1);
-                    break;
-                case KeyEvent.VK_SEMICOLON:
-                    setBit(5, 0);
-                    break;
-                case KeyEvent.VK_COLON:
-                    setBit(6, 0);
-                    break;
-                case KeyEvent.VK_QUOTE: // @
+                case KeyEvent.VK_COMMA -> // ,
+                        setBit(4, 1);
+                case KeyEvent.VK_PERIOD -> // .
+                        setBit(5, 1);
+                case KeyEvent.VK_SLASH -> setBit(6, 1);
+                case KeyEvent.VK_SEMICOLON -> setBit(5, 0);
+                case KeyEvent.VK_COLON -> setBit(6, 0);
+                case KeyEvent.VK_QUOTE -> { // @
                     setSHIFT();
                     setBit(3, 2);
-                    break;
-                case KeyEvent.VK_MINUS:
-                    setBit(0, 2);
-                    break;
-                case KeyEvent.VK_EQUALS:
+                }
+                case KeyEvent.VK_MINUS -> setBit(0, 2);
+                case KeyEvent.VK_EQUALS -> {
                     setSHIFT();
                     setBit(0, 2);
-                    break;
-                case KeyEvent.VK_OPEN_BRACKET:
+                }
+                case KeyEvent.VK_OPEN_BRACKET -> {
                     setSHIFT();
                     setBit(6, 6);
-                    break;
-                case KeyEvent.VK_CLOSE_BRACKET:
+                }
+                case KeyEvent.VK_CLOSE_BRACKET -> {
                     setSHIFT();
                     setBit(7, 6);
-                    break;
-                case KeyEvent.VK_BACK_SLASH:
+                }
+                case KeyEvent.VK_BACK_SLASH -> {
                     setSHIFT(); // [
                     setBit(6, 6);
-                    break;
-                case KeyEvent.VK_AT:
-                    setBit(0, 5);
-                    break;
-                case KeyEvent.VK_BRACELEFT:
+                }
+                case KeyEvent.VK_AT -> setBit(0, 5);
+                case KeyEvent.VK_BRACELEFT -> {
                     setCTRL();
                     setBit(5, 0);
-                    break;
-                case KeyEvent.VK_BRACERIGHT:
+                }
+                case KeyEvent.VK_BRACERIGHT -> {
                     setCTRL();
                     setSHIFT();
                     setBit(0, 2);
-                    break;
+                }
 
                 // A..Z
-                case KeyEvent.VK_A:
-                    setBit(4, 4);
-                    break;
-                case KeyEvent.VK_B:
-                    setBit(1, 1);
-                    break;
-                case KeyEvent.VK_C:
-                    setBit(7, 3);
-                    break;
-                case KeyEvent.VK_D:
-                    setBit(2, 3);
-                    break;
-                case KeyEvent.VK_E:
-                    setBit(3, 3);
-                    break;
-                case KeyEvent.VK_F:
-                    setBit(1, 3);
-                    break;
-                case KeyEvent.VK_G:
-                    setBit(7, 0);
-                    break;
-                case KeyEvent.VK_H:
-                    setBit(1, 0);
-                    break;
-                case KeyEvent.VK_I:
-                    setBit(4, 5);
-                    break;
-                case KeyEvent.VK_J:
-                    setBit(2, 0);
-                    break;
-                case KeyEvent.VK_K:
-                    setBit(3, 0);
-                    break;
-                case KeyEvent.VK_L:
-                    setBit(4, 0);
-                    break;
-                case KeyEvent.VK_M:
-                    setBit(3, 1);
-                    break;
-                case KeyEvent.VK_N:
-                    setBit(2, 1);
-                    break;
-                case KeyEvent.VK_O:
-                    setBit(5, 5);
-                    break;
-                case KeyEvent.VK_P:
-                    setBit(6, 5);
-                    break;
-                case KeyEvent.VK_Q:
-                    setBit(5, 4);
-                    break;
-                case KeyEvent.VK_R:
-                    setBit(7, 5);
-                    break;
-                case KeyEvent.VK_S:
-                    setBit(3, 4);
-                    break;
-                case KeyEvent.VK_T:
-                    setBit(1, 5);
-                    break;
-                case KeyEvent.VK_U:
-                    setBit(3, 5);
-                    break;
-                case KeyEvent.VK_V:
-                    setBit(7, 1);
-                    break;
-                case KeyEvent.VK_W:
-                    setBit(4, 3);
-                    break;
-                case KeyEvent.VK_X:
-                    setBit(1, 4);
-                    break;
-                case KeyEvent.VK_Y:
-                    setBit(2, 5);
-                    break;
-                case KeyEvent.VK_Z:
-                    setBit(2, 4);
-                    break;
+                case KeyEvent.VK_A -> setBit(4, 4);
+                case KeyEvent.VK_B -> setBit(1, 1);
+                case KeyEvent.VK_C -> setBit(7, 3);
+                case KeyEvent.VK_D -> setBit(2, 3);
+                case KeyEvent.VK_E -> setBit(3, 3);
+                case KeyEvent.VK_F -> setBit(1, 3);
+                case KeyEvent.VK_G -> setBit(7, 0);
+                case KeyEvent.VK_H -> setBit(1, 0);
+                case KeyEvent.VK_I -> setBit(4, 5);
+                case KeyEvent.VK_J -> setBit(2, 0);
+                case KeyEvent.VK_K -> setBit(3, 0);
+                case KeyEvent.VK_L -> setBit(4, 0);
+                case KeyEvent.VK_M -> setBit(3, 1);
+                case KeyEvent.VK_N -> setBit(2, 1);
+                case KeyEvent.VK_O -> setBit(5, 5);
+                case KeyEvent.VK_P -> setBit(6, 5);
+                case KeyEvent.VK_Q -> setBit(5, 4);
+                case KeyEvent.VK_R -> setBit(7, 5);
+                case KeyEvent.VK_S -> setBit(3, 4);
+                case KeyEvent.VK_T -> setBit(1, 5);
+                case KeyEvent.VK_U -> setBit(3, 5);
+                case KeyEvent.VK_V -> setBit(7, 1);
+                case KeyEvent.VK_W -> setBit(4, 3);
+                case KeyEvent.VK_X -> setBit(1, 4);
+                case KeyEvent.VK_Y -> setBit(2, 5);
+                case KeyEvent.VK_Z -> setBit(2, 4);
+
                 //
-                case KeyEvent.VK_0:
-                    setBit(6, 2);
-                    break;
-                case KeyEvent.VK_1:
-                    setBit(6, 4);
-                    break;
-                case KeyEvent.VK_2:
-                    setBit(6, 3);
-                    break;
-                case KeyEvent.VK_3:
-                    setBit(5, 3);
-                    break;
-                case KeyEvent.VK_4:
-                    setBit(7, 2);
-                    break;
-                case KeyEvent.VK_5:
-                    setBit(1, 2);
-                    break;
-                case KeyEvent.VK_6:
-                    setBit(2, 2);
-                    break;
-                case KeyEvent.VK_7:
-                    setBit(3, 2);
-                    break;
-                case KeyEvent.VK_8:
-                    setBit(4, 2);
-                    break;
-                case KeyEvent.VK_9:
-                    setBit(5, 2);
-                    break;
+                case KeyEvent.VK_0 -> setBit(6, 2);
+                case KeyEvent.VK_1 -> setBit(6, 4);
+                case KeyEvent.VK_2 -> setBit(6, 3);
+                case KeyEvent.VK_3 -> setBit(5, 3);
+                case KeyEvent.VK_4 -> setBit(7, 2);
+                case KeyEvent.VK_5 -> setBit(1, 2);
+                case KeyEvent.VK_6 -> setBit(2, 2);
+                case KeyEvent.VK_7 -> setBit(3, 2);
+                case KeyEvent.VK_8 -> setBit(4, 2);
+                case KeyEvent.VK_9 -> setBit(5, 2);
+
 
                 // Special non-standard keys
-                case KeyEvent.VK_ESCAPE:
-                    setBit(0, 1);
-                    break;
+                case KeyEvent.VK_ESCAPE -> setBit(0, 1);
             }
             SetControlKeyBits();
             keyboard.setKeyStroke(buffer);
@@ -674,32 +426,16 @@ class KeyboardHandler implements KeyListener, WindowFocusListener {
      */
     private void setBit(int sequenceByte, int bit) {
         int item = buffer[sequenceByte];
-        switch (bit) {
-            default:
-                item = item | 0x01;
-                break;
-            case 1:
-                item = item | 0x02;
-                break;
-            case 2:
-                item = item | 0x04;
-                break;
-            case 3:
-                item = item | 0x08;
-                break;
-            case 4:
-                item = item | 0x10;
-                break;
-            case 5:
-                item = item | 0x20;
-                break;
-            case 6:
-                item = item | 0x40;
-                break;
-            case 7:
-                item = item | 0x80;
-                break;
-        }
+        item = switch (bit) {
+            default -> item | 0x01;
+            case 1 -> item | 0x02;
+            case 2 -> item | 0x04;
+            case 3 -> item | 0x08;
+            case 4 -> item | 0x10;
+            case 5 -> item | 0x20;
+            case 6 -> item | 0x40;
+            case 7 -> item | 0x80;
+        };
         buffer[sequenceByte] = item;
     }
 
@@ -711,32 +447,16 @@ class KeyboardHandler implements KeyListener, WindowFocusListener {
      */
     private void resetBit(int sequenceByte, int bit) {
         int item = buffer[sequenceByte];
-        switch (bit) {
-            default:
-                item = item & 0xFE;
-                break;
-            case 1:
-                item = item & 0xFD;
-                break;
-            case 2:
-                item = item & 0xFB;
-                break;
-            case 3:
-                item = item & 0xF7;
-                break;
-            case 4:
-                item = item & 0xEF;
-                break;
-            case 5:
-                item = item & 0xDF;
-                break;
-            case 6:
-                item = item & 0xBF;
-                break;
-            case 7:
-                item = item & 0x7F;
-                break;
-        }
+        item = switch (bit) {
+            default -> item & 0xFE;
+            case 1 -> item & 0xFD;
+            case 2 -> item & 0xFB;
+            case 3 -> item & 0xF7;
+            case 4 -> item & 0xEF;
+            case 5 -> item & 0xDF;
+            case 6 -> item & 0xBF;
+            case 7 -> item & 0x7F;
+        };
         buffer[sequenceByte] = item;
     }
 }
