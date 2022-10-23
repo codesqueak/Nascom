@@ -20,7 +20,7 @@ At present the available version of the Jacoco plugin (2.0.1 at time of writing)
 
 ### Instructions
 
-1. Clone the project fro github
+1. Clone the project from github
 2. Find required ROM's (See configuration below)
 3. run gradlew clean build / ./gradlew clean build
 5. run gradlew makedist / ./gradlew makedist
